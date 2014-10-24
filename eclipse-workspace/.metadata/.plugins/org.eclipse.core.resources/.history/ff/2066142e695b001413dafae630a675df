@@ -1,0 +1,65 @@
+package com.iparadigms.ipgrammar;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CorpusTextHolder {
+    
+    private final String RESOURCES_DIR = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/";
+    private final String TATOEBA_CORPUS_CSV = RESOURCES_DIR + "sentences.csv";
+    private final String CORPUS_FILENAME_SUFFIX = "_tatoeba_corpus.txt";
+    
+    private List<String> _arrayLines = new ArrayList<String>();
+    
+    public CorpusTextHolder (String corpusText, String langCode, int upperLimit) throws IOException {
+        String extractedCorpusFileName = RESOURCES_DIR + langCode + CORPUS_FILENAME_SUFFIX;
+        File f = new File(RESOURCES_DIR + langCode + CORPUS_FILENAME_SUFFIX);
+        
+        if (!f.exists()) {
+System.out.println("EXTRACTING CORPUS TEXT");
+            //Extract text from corpus while also adding lines to text until line limit reached
+            BufferedReader corpusReader = new BufferedReader(new FileReader(TATOEBA_CORPUS_CSV));
+            FileWriter write = new FileWriter(extractedCorpusFileName, false);
+            PrintWriter printLine = new PrintWriter(write);
+            String line = "";
+            
+            //Keep looping through until corpus is out of lines
+            while ((line = corpusReader.readLine()) != null){
+                if(line.split("\t")[1].equals(langCode)){
+                    printLine.println(line.split("\t")[2]);
+                }
+            }
+            corpusReader.close();
+            printLine.close();
+        }
+        
+        File f = new File(RESOURCES_DIR + langCode + CORPUS_FILENAME_SUFFIX);
+        
+        if (!f.exists()) {
+    }
+    
+    public void loadCorpusText (int upperLimit) {
+        // TODO : add lines from extracted corpus to class variable
+        File f = new File(RESOURCES_DIR + langCode + CORPUS_FILENAME_SUFFIX);
+        
+        if (!f.exists()) {
+    }
+    
+    public String getLinesToString (int startIndex, int endIndex) {
+        return _arrayLines.subList(startIndex, endIndex).toString();
+    }
+    
+    public List<String> getLines (int startIndex, int endIndex) {
+        return _arrayLines.subList(startIndex, endIndex);
+    }
+    
+    public String getLine (int lineNumber) {
+        return _arrayLines.get(lineNumber);
+    }
+}

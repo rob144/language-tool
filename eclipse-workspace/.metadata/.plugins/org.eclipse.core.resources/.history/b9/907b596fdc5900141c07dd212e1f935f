@@ -1,0 +1,52 @@
+package com.iparadigms.ipgrammar;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
+public class ExtractCorpusText {
+    
+    private final String CORPUS_DIR = "./grammar-webapp/src/main/java/com/iparadigms/ipgrammar/resources/";
+    private final String TATOEBA_CORPUS_SUFFIX = "_tatoeba_corpus.txt";
+    private final String TATOEBA_CORPUS_CSV = CORPUS_DIR + "sentences.csv";
+    
+    public ExtractCorpusText(){}
+    
+    public String getTatoebaCorpus (String langCode, boolean extract, int lineLimit) throws IOException{
+
+        String corpusText = "";
+        String extractedCorpusFile = CORPUS_DIR + langCode + TATOEBA_CORPUS_SUFFIX;
+        String line = null;
+        int lineCount = 0;
+        
+        if(extract){
+            try{
+                FileWriter write = new FileWriter(extractedCorpusFile, false);
+                PrintWriter printLine = new PrintWriter(write);
+                
+                BufferedReader reader = new BufferedReader(new FileReader(TATOEBA_CORPUS_CSV));
+                while ((line = reader.readLine()) != null && lineCount < lineLimit) {
+                    System.out.println("LINE: " + line);
+                    if(line.split("\t")[1].equals(langCode)){
+                        //printLine.printf("%s" + "%n", line.split("\t")[2]);
+                        line = line.split("\t")[2];
+                        corpusText += line + "\n";
+                        printLine.println(line);
+                    }
+                }
+                printLine.close();
+                reader.close();
+            } catch(IOException ex){
+                System.out.println(ex.getMessage());
+            }
+        }else{
+             
+        }
+        
+        return corpusText;
+    }
+}

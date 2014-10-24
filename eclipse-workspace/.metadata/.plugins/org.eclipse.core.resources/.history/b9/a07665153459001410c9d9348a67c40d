@@ -1,0 +1,46 @@
+package com.iparadigms.ipgrammar;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.languagetool.JLanguageTool;
+import org.languagetool.Language;
+import org.languagetool.rules.RuleMatch;
+import org.languagetool.rules.patterns.PatternRule;
+import org.languagetool.rules.patterns.PatternRuleLoader;
+import org.languagetool.tools.RuleAsXmlSerializer;
+
+public class RuleTestHelper {
+
+    private Language _lang;
+    private JLanguageTool _langTool;
+    private final String RULES_FILENAME = "MyRules.xml";
+    private List<PatternRule> _myRules;
+    private final Logger LOG = Logger.getLogger(TextEngineServlet.class.getName());
+    
+    public RuleTestHelper()  throws InstantiationException, IllegalAccessException, IOException{
+        _lang = Language.getLanguageForShortName("en-GB").getClass().newInstance();
+        _langTool = new JLanguageTool(_lang);  
+    }
+    
+    public String testRule(PatternRule rule, String text) throws IOException{
+        //Load one rule
+        try {
+            PatternRuleLoader ruleLoader = new PatternRuleLoader();
+            _myRules = ruleLoader.getRules(
+                TextEngineServlet.class.getResourceAsStream(RULES_FILENAME), RULES_FILENAME);
+            for (PatternRule r : _myRules) {
+                _langTool.addRule(r);
+            }
+        }catch (NullPointerException ex) { LOG.log(Level.INFO, ex.toString()); }
+        
+        List<RuleMatch> matches = _langTool.check(text);
+LOG.log(Level.INFO, "TEST RULE RESULT - Number of matches: {0}", matches.size() );
+        final RuleAsXmlSerializer serializer = new RuleAsXmlSerializer();
+        final String xmlResponse = serializer.ruleMatchesToXml(matches, text, CONTEXT_SIZE, _lang);
+        return xmlResponse;
+        
+    }
+}

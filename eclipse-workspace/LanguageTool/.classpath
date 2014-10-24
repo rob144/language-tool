@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="grammar-webapp/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/cjftransform.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/commons-cli.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/hamcrest-core.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/hppc.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/hunspell-native-libs.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/ictclas4j.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/jetty-all.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/jna.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/junit.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/jwordsplitter.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/languagetool-core-tests.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/languagetool-core.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/languagetool-gui-commons.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/lucene-core.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/lucene-gosen-ipadic.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/morfologik-fsa.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/morfologik-polish.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/morfologik-speller.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/morfologik-stemming.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/morfologik-tools.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/opennlp-chunk-models.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/opennlp-maxent.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/opennlp-postag-models.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/opennlp-tokenize-models.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/opennlp-tools.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/segment.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/tika-core.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

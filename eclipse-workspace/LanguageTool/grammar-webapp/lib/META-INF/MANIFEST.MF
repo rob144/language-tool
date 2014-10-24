@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Implementation-Date: 2014-10-07 22:01
+Built-By: languagetool
+Build-Jdk: 1.7.0_07
+ComponentVersion: 2.8-SNAPSHOT
+Created-By: Apache Maven 3.0.4
+Archiver-Version: Plexus Archiver
+

@@ -1,0 +1,6 @@
+lib
+lib/*.jar
+lib/org/
+src/main/java/
+src/main/java/com/iparadigms/ipgrammar/
+target/classes/
