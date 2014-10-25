@@ -1,4 +1,0 @@
-#Copy the custom grammar rules file to the target directory so it is available to the java classes at runtime.
-cp src/main/java/com/iparadigms/ipgrammar/MyRules.xml target/classes/com/iparadigms/ipgrammar/
-#Copy the verb.txt file to the classes directory so it can be accessed by the VerbTool class
-cp src/main/java/com/iparadigms/ipgrammar/verb.txt target/classes/com/iparadigms/ipgrammar/

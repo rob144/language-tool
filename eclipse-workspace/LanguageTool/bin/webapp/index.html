@@ -3,8 +3,8 @@
 	<head>
         <title>Grammar Tool</title>
         <script src="jquery-1.11.1.js"></script>
-        <!-- <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"> -->
-        <!-- <script type="text/javascript" src="bootstrap/js/bootstrap-tab.js"></script> -->
+        <link href="bootstrap320/css/bootstrap.min.css" rel="stylesheet">
+		<script src="bootstrap320/js/bootstrap.min.js"></script>
         <link rel="stylesheet" type="text/css" href="ipgrammar.css">
         <script src="ipgrammar.js"></script>
         <script src="xsltjs/xslt.js"></script>
@@ -15,42 +15,58 @@
         <div id='pageContent'>
             <div id='headerRow'>
                 <h1 id='headerLeft'><a id='grammar-tool-title' href='/'>Grammar Tool</a></h1>
-                <p id='headerRight'>
-                </p>
-            </div>
-            <div id='buttonRow'>
-                <select id='selectLang'>
-                    <option value='en-GB'>English (GB)</option>
-                    <option value='en-US'>English (US)</option>
-                </select>
-                <input type='submit' id='btnSubmitPost' value='Check Text'/>
-                <div id='loadingDiv'>
-                    <div id='loadingImage'><img  src='loading.gif' alt='loading image'/></div>
-                    <div id='loadingMessage'>Loading...</div>
+                <div id='headerRight'>
+                	<select >
+                    	<option value='en-GB'>English (GB)</option>
+                    	<option value='en-US'>English (US)</option>
+                	</select>
+                	<div class="dropdown" id='selectLang'>
+					  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+					    Dropdown<span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English (GB)</a></li>
+					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English (US)</a></li>
+					  </ul>
+					</div>
                 </div>
             </div>
+            <ul class="nav nav-tabs" role="tablist" id="tabs">
+				<li class="active"><a href="#editorTab" role="tab" data-toggle="tab">Editor</a></li>
+				<li><a href="#markupTab" role="tab" data-toggle="tab">Markup</a></li>
+				<li><a href="#tableTab" role="tab" data-toggle="tab">Error List</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="editorTab">
+					<textarea id='inputText' name='inputText' cols='100' rows='15'>editorTab</textarea>
+					<div id='buttonRow'>      
+	                <input type='submit' id='btnSubmitPost' class='btn btn-success' value='Check Text'/>
+	                <div id='loadingDiv'>
+	                    <div id='loadingImage'><img  src='loading.gif' alt='loading image'/></div>
+	                    <div id='loadingMessage'>Loading...</div>
+	                </div>
+	            </div>
+				</div>
+				<div class="tab-pane" id="markupTab">
+					<div id='textMarkedOuter'>
+						<div id='textMarked'>Text markup.</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="tableTab">
+					<div id='xslOutput'>Results will be displayed here.</div>
+				</div>
+			</div>
+<!-- 
             <div id='actionsRow'>
-                <a class='tab' id='editorTab' href='#' onclick='showTab("inputText");'>Editor</a>
-                <a class='tab' id='markupTab' href='#' onclick='showTab("textMarked", DATA.getPageText(1));'>Markup</a>
-                <a class='tab' id='tableTab' href='#' onclick='showTab("xslOutput");'>Error List</a>
+                <a class='tab' id='editorTab' href='#editor' onclick='showTab("inputText");'>Editor</a>
+                <a class='tab' id='markupTab' href='#markup' onclick='showTab("textMarked", DATA.getPageText(1));'>Markup</a>
+                <a class='tab' id='tableTab' href='#errorlist' onclick='showTab("xslOutput");'>Error List</a>
                 <a class='tab' id='xmlTab' href='#' onclick='showTab("xmlOutput");'>XML</a>
                 <a class='tabRight' id='clearText' href='#' onclick='clearText();'>Clear Text</a>
                 <div class='tabRight' id='pagination' href='#'>
                     <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE - 1));'> < </a>
                     <div id='pageXofY'>Page X of Y</div>
                     <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE + 1));'> > </a>
-                </div>
-            </div>
-            <div id='textFields'>
-                <textarea id='inputText' name='inputText' cols='100' rows='20'></textarea>
-                <div id='textMarkedOuter'>
-                    <div id='textMarked'>Text markup.</div>
-                </div>
-                <div id='output'>
-                    <div id='xslOutput'>Results will be displayed here.</div>
-                    <div id='xmlOutput'>
-                        <textarea rows='12' id='xmlOutputText' readonly="readonly">Results will be displayed here.</textarea>
-                    </div>
                 </div>
             </div>
             <div id='links'>
@@ -64,6 +80,7 @@
                     <li><a target="_blank" href="http://wiki.languagetool.org/developing-robust-rules/">Developing robust rules</a></li>
                 </ul>
             </div>
+-->
         </div>
 	</body>
 

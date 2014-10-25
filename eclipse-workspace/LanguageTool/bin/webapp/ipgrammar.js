@@ -153,14 +153,14 @@ function clearText(){
 
 function showTab(viewId, text){
 
-    var views = ['textMarkedOuter','inputText','xmlOutput','xslOutput','links'];
-    for(var i=0;i<views.length;i++){
-        if(views[i] != viewId) $('#'+views[i]).css('display','none');
-    }
-    $('#'+viewId).css('display','block');
-
-    if(viewId == 'textMarked'){
-        $('#textMarkedOuter').css('display','block');
+    var views = ['markupTab','inputText','xmlOutput','tableTab','links'];
+    //for(var i=0;i<views.length;i++){
+    //    if(views[i] != viewId) $('#'+views[i]).css('display','none');
+    //}
+    //$('#'+viewId).css('display','block');
+    $('#tabs a[href="#'+ viewId +'"]').tab('show');
+    
+    if(viewId == 'markupTab'){
         
         if (typeof text === 'undefined'){  
             $('#textMarked').html(DATA.textMarked[0]);
@@ -250,14 +250,9 @@ $( document ).ready(function() {
                 var $xmlObj = $( $.parseXML('<root>'+ xml +'</root>') );
                 var xmlString = $xmlObj.find('root').html().trim();
 
-console.log("HELLO");
-console.log(xmlString);
-
                 DATA.processErrorXml( $xmlObj.find('error') );
-
                 new Transformation().setXml(xmlString).setXslt("grammar_errors.xsl").transform("xslOutput");
-                showTab( 'textMarked', DATA.getPageText(1) );
-                
+                showTab( 'markupTab', DATA.getPageText(1) );
                 $("#loadingDiv").hide();
             },
             error: function(xhr, textStatus, error){

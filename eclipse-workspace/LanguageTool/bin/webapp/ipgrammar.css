@@ -1,9 +1,13 @@
 body { padding:10px;font-family: Arial, Helvetica, sans-serif;}
 #pageContent { width:800px; margin:0 auto 0 auto; }
-#headerRow { overflow:auto;  }
+h1 { margin:0; border:0; }
+#headerRow { height:50px; overflow:visible;  }
 #headerLeft { float:left; }
 #headerRight { float:right; }
 #buttonRow { width:100%; overflow:auto; margin:10px 0 15px 0; }
+#grammar-tool-title{
+    text-decoration:none;
+}
 #selectLang { 
     float:left;
     font-size:12pt;
@@ -18,10 +22,10 @@ body { padding:10px;font-family: Arial, Helvetica, sans-serif;}
 #loadingImage img { width:18px; float:left; margin:0 0 0 10px; }
 h1 { font-size: 14pt; }
 h2 { font-size: 12pt; float:left; margin:0; padding:0; }
-#textFields { margin: 0 0 100px 0; }
-#grammar-tool-title{
-    text-decoration:none;
+.tab-content {
+	padding:5px 0 0 0;
 }
+#textFields { margin: 0 0 100px 0; }
 textarea {
     clear:both;
     font-family: "Courier New", Courier, monospace;
@@ -29,6 +33,7 @@ textarea {
     padding:8px;
     font-size:11pt;
 }
+p.line { margin:0; }
 table { 
     border-collapse:collapse;
     width:800px;
@@ -46,19 +51,17 @@ a.tab { margin: 0 10px 5px 0; }
     width:800px;             
 }
 #textMarkedOuter {
-    display:none;
     padding:10px 0 0 0;
-    background-color:grey;
+    background-color:rgb(233, 233, 233);
 }
 #textMarked { 
-    display:none; 
     position:relative;
     font-family: "Courier New", Courier, monospace;
     font-size:11pt;
     width:700px;  
     min-height:250px;
     margin:0px auto 5px auto;
-    border:1px solid black;
+    border:1px solid rgb(200, 200, 200);
     padding:40px; 
     background-color:white;
 }
@@ -74,15 +77,6 @@ a.tab { margin: 0 10px 5px 0; }
     min-height:250px;
     border:1px solid black;
     padding:8px; 
-}
-#xslOutput { display:none; }
-#xmlOutput { display:none; }
-#xmlOutputText { width:800px; }
-p.line { margin: 0 0 4px 0; }
-span.e { 
-    padding:2px 2px 0 2px;
-    background-color: rgb(255,255,0); 
-    border-radius: 4px;
 }
 #testText { display:none; }
 .myQtipStyle .qtip-content {
@@ -123,7 +117,6 @@ max-width:300px;
     padding:0;
 }
 .error-highlight {
-    background-color:yellow;
+    background-color: rgb(255, 255, 157);
     border-bottom:1px solid orange;
-    border-top:1px solid orange;
 }
