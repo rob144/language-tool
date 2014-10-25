@@ -1,5 +1,5 @@
 var MAX_PAGE_LINES = 50;
-var CURRENT_PAGE = 1;
+var CURRENT_PAGE = 1; 
 
 /* ********************************************************* */
 /* DATA class : variables and methods for handling the input
@@ -153,11 +153,6 @@ function clearText(){
 
 function showTab(viewId, text){
 
-    var views = ['markupTab','inputText','xmlOutput','tableTab','links'];
-    //for(var i=0;i<views.length;i++){
-    //    if(views[i] != viewId) $('#'+views[i]).css('display','none');
-    //}
-    //$('#'+viewId).css('display','block');
     $('#tabs a[href="#'+ viewId +'"]').tab('show');
     
     if(viewId == 'markupTab'){
@@ -228,6 +223,16 @@ function addHighlighting( arrXmlErrors ){
     }
 }
 
+function getLanguageCode(){
+	
+	var langCode = '';
+	var langText = $('#dropDownLang').text();
+	if(langText.indexOf('English (US)') >= 0) langCode = 'en-US';
+	if(langText.indexOf('English (GB)') >= 0) langCode = 'en-GB';
+	return langCode;
+	
+}
+
 $( document ).ready(function() {
     
     setTestText();
@@ -241,7 +246,7 @@ $( document ).ready(function() {
         $.ajax({
             type: 'POST',
             dataType: 'text',
-            url: '/' + $('#selectLang').val() + '/checktext',
+            url: '/' + getLanguageCode() + '/checktext',
             data: 'text=' + encodeURIComponent( DATA.plainText ),
             success: function( xml ){
                 

@@ -16,15 +16,12 @@
             <div id='headerRow'>
                 <h1 id='headerLeft'><a id='grammar-tool-title' href='/'>Grammar Tool</a></h1>
                 <div id='headerRight'>
-                	<select >
-                    	<option value='en-GB'>English (GB)</option>
-                    	<option value='en-US'>English (US)</option>
-                	</select>
                 	<div class="dropdown" id='selectLang'>
-					  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-					    Dropdown<span class="caret"></span>
+					  <button class="btn btn-default dropdown-toggle" type="button" id="dropDownLang" data-toggle="dropdown">
+					    English (GB)
+					    <span class="caret"></span>
 					  </button>
-					  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+					  <ul class="dropdown-menu" role="menu" aria-labelledby="dropDownLang">
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English (GB)</a></li>
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English (US)</a></li>
 					  </ul>
@@ -35,6 +32,7 @@
 				<li class="active"><a href="#editorTab" role="tab" data-toggle="tab">Editor</a></li>
 				<li><a href="#markupTab" role="tab" data-toggle="tab">Markup</a></li>
 				<li><a href="#tableTab" role="tab" data-toggle="tab">Error List</a></li>
+				<li><a href="#linksTab" role="tab" data-toggle="tab">Links</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active" id="editorTab">
@@ -48,6 +46,11 @@
 	            </div>
 				</div>
 				<div class="tab-pane" id="markupTab">
+					<div class='tabRight' id='pagination' href='#'>
+	                    <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE - 1));'> < </a>
+	                    <div id='pageXofY'>Page X of Y</div>
+	                    <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE + 1));'> > </a>
+	                </div>
 					<div id='textMarkedOuter'>
 						<div id='textMarked'>Text markup.</div>
 					</div>
@@ -55,33 +58,26 @@
 				<div class="tab-pane" id="tableTab">
 					<div id='xslOutput'>Results will be displayed here.</div>
 				</div>
+				<div class="tab-pane" id="linksTab">
+					<ul>
+	                    <li><a target="_blank" href="https://www.languagetool.org/">www.languagetool.org</a></li>
+	                    <li><a target="_blank" href="https://www.danielnaber.de/">www.danielnaber.de</a></li>
+	                    <li><a target="_blank" href="https://github.com/languagetool-org/languagetool">LT on GitHub</a></li>
+	                    <li><a target="_blank" href="http://community.languagetool.org/">LT Community (Text Analysis, Rule Editor, WikiCheck)</a></li>
+	                    <li><a target="_blank" href="http://github.com/kimduho/nlp/wiki/Part-of-Speech-tags/">Example POS Tags</a></li>
+	                    <li><a target="_blank" href="http://languagetool-user-forum.2306527.n4.nabble.com/">LT User Forum</a></li>
+	                    <li><a target="_blank" href="http://wiki.languagetool.org/developing-robust-rules/">Developing robust rules</a></li>
+                	</ul>
+				</div>
 			</div>
-<!-- 
-            <div id='actionsRow'>
-                <a class='tab' id='editorTab' href='#editor' onclick='showTab("inputText");'>Editor</a>
-                <a class='tab' id='markupTab' href='#markup' onclick='showTab("textMarked", DATA.getPageText(1));'>Markup</a>
-                <a class='tab' id='tableTab' href='#errorlist' onclick='showTab("xslOutput");'>Error List</a>
-                <a class='tab' id='xmlTab' href='#' onclick='showTab("xmlOutput");'>XML</a>
-                <a class='tabRight' id='clearText' href='#' onclick='clearText();'>Clear Text</a>
-                <div class='tabRight' id='pagination' href='#'>
-                    <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE - 1));'> < </a>
-                    <div id='pageXofY'>Page X of Y</div>
-                    <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE + 1));'> > </a>
-                </div>
-            </div>
-            <div id='links'>
-                <ul>
-                    <li><a target="_blank" href="https://www.languagetool.org/">www.languagetool.org</a></li>
-                    <li><a target="_blank" href="https://www.danielnaber.de/">www.danielnaber.de</a></li>
-                    <li><a target="_blank" href="https://github.com/languagetool-org/languagetool">LT on GitHub</a></li>
-                    <li><a target="_blank" href="http://community.languagetool.org/">LT Community (Text Analysis, Rule Editor, WikiCheck)</a></li>
-                    <li><a target="_blank" href="http://github.com/kimduho/nlp/wiki/Part-of-Speech-tags/">Example POS Tags</a></li>
-                    <li><a target="_blank" href="http://languagetool-user-forum.2306527.n4.nabble.com/">LT User Forum</a></li>
-                    <li><a target="_blank" href="http://wiki.languagetool.org/developing-robust-rules/">Developing robust rules</a></li>
-                </ul>
-            </div>
--->
         </div>
 	</body>
+	
+	<script>
+		$(".dropdown-menu li a").click(function(){
+			 $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+			 $(this).parents(".dropdown").find('.btn').val($(this).text());
+		});
+	</script>
 
 </html>
