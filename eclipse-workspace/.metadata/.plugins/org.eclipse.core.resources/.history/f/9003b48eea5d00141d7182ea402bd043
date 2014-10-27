@@ -1,0 +1,17 @@
+package com.iparadigms.ipgrammar;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class WordDictionary {
+    
+    private ArrayList wordList = new ArrayList();
+    
+    public WordDictionary () {
+        
+    }
+    
+    public void addWord (String word, String lemma, String tag) {
+        
+    }
+}

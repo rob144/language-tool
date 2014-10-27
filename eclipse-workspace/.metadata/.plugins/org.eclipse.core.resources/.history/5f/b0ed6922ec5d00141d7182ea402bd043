@@ -1,0 +1,43 @@
+package com.iparadigms.ipgrammar;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+
+public class POSDictionary {
+    
+    private ArrayList<String[]> posDictionary = new ArrayList<String[]>();
+    
+    public POSDictionary () {
+        
+    }
+    
+    public void addWord (String word, String lemma, String posTag) {
+        String[] wordItems = new String[3];
+        wordItems[0] = word;
+        wordItems[1] = lemma;
+        wordItems[2] = posTag;
+        posDictionary.add(wordItems);
+    }
+    
+    public void addWord (String posWord) {
+        String[] wordItems = new String[3];
+        wordItems = posWord.split("\t");
+    }
+    
+    public void populatePosDictionary () {
+        BufferedReader corpusReader = new BufferedReader(new FileReader("dict.dump location"));
+        
+        while ((line = corpusReader.readLine()) != null){
+            addWord ();
+            
+            line.split("\t")[1];
+            
+            
+            if(line.split("\t")[1].equals(_langCode)){
+                printLine.println(line.split("\t")[2]);
+            }
+        }
+    }
+}

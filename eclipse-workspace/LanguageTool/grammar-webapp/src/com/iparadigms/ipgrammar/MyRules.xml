@@ -329,8 +329,20 @@
         </rulegroup>
         <rulegroup id= "IP_SINGULAR_NOUN_PHRASE_INITIATION" name="Singular noun phrase initiation">
             <rule>
+                <antipattern>
+                    <token postag="NN"/>
+                    <token postag="CD"/>
+                </antipattern>
                 <pattern>
-                    <token postag="NN" chunk="B-NP-singular"><exception>mine</exception><exception>half</exception><exception postag="CD"/></token>
+                    <marker>
+                        <token postag="NN" chunk="B-NP-singular">
+                            <exception>mine</exception>
+                            <exception>half</exception>
+                            <exception postag_regexp="yes" postag="CD|JJ|VB|VBP"/>
+                            <exception scope="previous" regexp="yes">,|of|or</exception>
+                            <exception scope="next" postag="SENT_END"/>
+                        </token>
+                    </marker>
                 </pattern>
                 <message>A singular common noun should have an article (a, the) or possessive (my, his, etc.) in front of it.</message>
                 <short>Improper use of common noun</short>
@@ -340,8 +352,11 @@
             </rule>
             <rule>
                 <pattern>
-                    <token skip="-1" postag="JJ" chunk="B-NP-singular"><exception scope="next" chunk="E-NP-singular"/><exception postag="CD"/> </token>
-                    <token postag="NN"/>
+                    <token postag="JJ" chunk="B-NP-singular"><exception postag_regexp="yes" postag="CD|DT"/></token>
+                    <marker>
+                        <token postag="NN"><exception>one-half</exception></token>
+                    </marker>
+                    <token><exception postag="SENT_END"/></token>
                 </pattern>
                 <message> A singular common noun phrase (eg a singular common noun preceded by adjectives), should have an article or a possessive.</message>
                 <short>Improper use of common noun phrase.</short>
@@ -399,15 +414,6 @@
                 <short>There instead of their</short>
                 <example type="correct">Their house has many paintings.</example>
                 <example type="incorrect"><marker>There</marker> house has many paintings.</example>
-            </rule>
-            <rule>
-                <pattern>
-                    <token chunk="B-NP-singular"><exception chunk="E-NP-singular"/>there</token>
-                </pattern>   
-                <message> The word "there" is used where it looks like <suggestion>their</suggestion> would be more appropriate.</message>
-                <short>There instead of their.</short>
-                <example type="correct">Their whole family will be there. </example>
-                <example type="incorrect" correction="Their"><marker>There</marker> whole family were late.</example>
             </rule>
         </rulegroup>
         <rule id="IP_VERB_CONJUGATION_ERRORS" name="Verb conjugation errors.">

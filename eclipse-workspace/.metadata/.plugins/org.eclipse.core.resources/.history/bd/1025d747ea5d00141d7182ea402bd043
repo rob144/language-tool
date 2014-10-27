@@ -1,0 +1,12 @@
+package com.iparadigms.ipgrammar;
+
+public class WordDictionary {
+    
+    private List[] wordList = new ArrayList();
+    
+    public WordDictionary () {
+        
+    }
+    
+    
+}

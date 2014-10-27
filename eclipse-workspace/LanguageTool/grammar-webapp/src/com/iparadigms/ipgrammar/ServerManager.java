@@ -43,8 +43,13 @@ public class ServerManager {
         RuleTestServlet testServlet = new RuleTestServlet();
         chTest.addServlet(new ServletHolder(testServlet), "/");
         
+        ServletContextHandler chDict = new ServletContextHandler();
+        chDict.setContextPath("/exportdictionary");
+        DictionaryServlet dictExport = new DictionaryServlet();
+        chDict.addServlet(new ServletHolder(dictExport), "/");
+        
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { rh, chEnGb, chEnUs, chTest });
+        handlers.setHandlers(new Handler[] { rh, chEnGb, chEnUs, chTest, chDict });
         
         server.setHandler(handlers);
 	}

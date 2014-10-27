@@ -1,0 +1,49 @@
+package com.iparadigms.ipgrammar;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import morfologik.tools.FSADumpTool;
+
+public class DictionaryServlet extends HttpServlet {
+    
+    private final String _dictionaryLocation = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/english.dict";
+    private POSDictionary dict = new POSDictionary();
+    
+    public DictionaryServlet () throws FileNotFoundException, IOException {
+    }
+    
+    public String exportDictionary () {
+        try {
+            //FSADumpTool.main("--raw-data", "-d", dictionaryLocation);
+        } catch (Exception ex) { System.out.println(ex); }
+        
+        return "";
+    }
+    
+    @Override
+    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        
+        String output = "";
+        
+        if (req.getParameter("newword") != null && !dict.searchWord(req.getParameter("searchword"))) {
+            dict.addWord(req.getParameter("newword"));
+            output = "Word added";
+        }
+        
+        if (req.getParameter("searchword") != null && dict.searchWord(req.getParameter("searchword"))) {
+            output = "Item exists";
+        }
+            
+        resp.getWriter().print(output);
+    }
+    
+    private void writeLog(String text){
+        System.out.println(text);
+    }
+}

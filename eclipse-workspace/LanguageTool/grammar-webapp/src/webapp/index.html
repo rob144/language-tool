@@ -33,6 +33,7 @@
 				<li><a href="#markupTab" role="tab" data-toggle="tab">Markup</a></li>
 				<li><a href="#tableTab" role="tab" data-toggle="tab">Error List</a></li>
 				<li><a href="#linksTab" role="tab" data-toggle="tab">Links</a></li>
+				<li><a href="#dictionaryTab" role="tab" data-toggle="tab">Dictionary</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active" id="editorTab">
@@ -68,6 +69,15 @@
 	                    <li><a target="_blank" href="http://languagetool-user-forum.2306527.n4.nabble.com/">LT User Forum</a></li>
 	                    <li><a target="_blank" href="http://wiki.languagetool.org/developing-robust-rules/">Developing robust rules</a></li>
                 	</ul>
+				</div>
+				<div class="tab-pane" id="dictionaryTab">
+				    <input type="text" size="50" id='inputTextDictAdd' name='inputTextDictAdd'/>
+				    <input type='submit' id='btnAddWord' class='btn btn-success' value='Add Word'/>
+
+				    <input type="text" size="50" id='inputTextDictSearch' name='inputTextDictSearch'/>
+                    <input type='submit' id='btnSearchWord' class='btn btn-success' value='Search Word'/>
+                    
+                    <div id="functionResult"/>
 				</div>
 			</div>
         </div>

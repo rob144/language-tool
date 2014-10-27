@@ -268,4 +268,37 @@ $( document ).ready(function() {
         });
     });   
 
+    $( "#btnAddWord" ).click(function() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: '/exportdictionary',
+            data: {add : $( "#inputTextDictAdd" ).val()},
+            success: function( xml ){
+                $('#functionResult').text(xml);
+            },
+            error: function(xhr, textStatus, error){
+                var errorMessage = 'Error connecting to the LanguageTool server.';
+                alert(errorMessage);
+                console.log(errorMessage);
+            }
+        });
+    });
+    
+    $( "#btnSearchWord" ).click(function() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: '/exportdictionary',
+            data: {search : $( "#inputTextDictSearch" ).val()},
+            success: function( xml ){
+                $('#functionResult').text(xml);
+            },
+            error: function(xhr, textStatus, error){
+                var errorMessage = 'Error connecting to the LanguageTool server.';
+                alert(errorMessage);
+                console.log(errorMessage);
+            }
+        });
+    }); 
 });
