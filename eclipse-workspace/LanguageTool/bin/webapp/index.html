@@ -71,13 +71,17 @@
                 	</ul>
 				</div>
 				<div class="tab-pane" id="dictionaryTab">
-				    <input type="text" size="50" id='inputTextDictAdd' name='inputTextDictAdd'/>
-				    <input type='submit' id='btnAddWord' class='btn btn-success' value='Add Word'/>
-
-				    <input type="text" size="50" id='inputTextDictSearch' name='inputTextDictSearch'/>
-                    <input type='submit' id='btnSearchWord' class='btn btn-success' value='Search Word'/>
-                    
-                    <div id="functionResult"/>
+					<div id="dictionaryForm">
+						<div class="formRow">
+						    <input type="text" size="50" id='inputTextDictAdd' name='inputTextDictAdd'/>
+						    <input type="submit" id="btnAddWord" class="btn btn-success" class="form-control" value="Add Word"/>
+					    </div>
+					    <div class="formRow">
+						    <input type="text" size="50" id="inputTextDictSearch" name="inputTextDictSearch"/>
+		                    <input type="submit" id="btnSearchWord" class="btn btn-success" value="Search Word"/>
+	                    </div>
+	                    <div id="functionResult"/>
+                    </div>
 				</div>
 			</div>
         </div>

@@ -1,9 +1,7 @@
 package com.iparadigms.ipgrammar;
 
 import java.util.List;
-import java.util.Properties;
 import java.io.IOException;
-import java.io.InputStream;
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
 import org.languagetool.language.BritishEnglish;
@@ -21,6 +19,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import com.iparadigms.ipgrammar.VerbConjugationRule;
 
+@SuppressWarnings("serial")
 public class TextEngineServlet extends HttpServlet{
 
     private final int CONTEXT_SIZE = 40; // characters

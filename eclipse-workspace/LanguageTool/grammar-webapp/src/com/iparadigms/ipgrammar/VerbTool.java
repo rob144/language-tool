@@ -101,8 +101,6 @@ public class VerbTool {
     }
 
     public boolean checkAgreement(String prevWord, String subject, String verb){
- 
- LOG.log(Level.INFO, "checkAgreement: " + prevWord + " " + subject + " " + verb );
 
         boolean result = false;
         /* subject of the verb e.g. in He loves her "he" is the subject
@@ -112,8 +110,6 @@ public class VerbTool {
         if(verb.toLowerCase().contains("n't")) verb = verb.replace("n't","");
 
         String infinitive = verb_infinitive(verb);
- LOG.log(Level.INFO, "verb " + verb );
- LOG.log(Level.INFO, "infinitive " + infinitive );
 
         /* If it's a real verb, i.e. can we find the infinitive?, do the conjugation check */
         if ( infinitive != null && infinitive.matches("[a-zA-Z]+") ){
@@ -127,8 +123,6 @@ public class VerbTool {
             options.put( "one"  ,   "third_person_sing"     );
             options.put( "we"   ,   "first_person_plural"   );
             options.put( "they" ,   "third_person_plural"   );
-
-    LOG.log(Level.INFO, "subject " + subject.toLowerCase() );
 
             String person = "";
             String option = options.get(subject.toLowerCase());
@@ -149,7 +143,6 @@ public class VerbTool {
             
             String listString = "";
             for (String s : valid_conjugations){ listString += s + "\t"; }
-            LOG.log(Level.INFO, "VALID CONJUGATIONS: " + listString );
 
             for (String string : valid_conjugations) {
                 if(string.matches(verb)){
@@ -174,8 +167,6 @@ public class VerbTool {
 
     public String verb_conjugate(String verb, String tense, boolean negate){
 
- LOG.log(Level.INFO, "conjugate: " + verb + " " + tense + " " + negate );
-
         /*Inflects the verb to the given tense.
         For example: be
         present: I am, you are, she is,
@@ -188,8 +179,6 @@ public class VerbTool {
         int index = verb_tenses_keys.get(tense);
         if(negate) index += verb_tenses_keys.size();
         String result = verb_tenses.get(verb)[index];
-
- LOG.log(Level.INFO, "index: " + index + " verb_tenses.get(verb): " + verb_tenses.get(verb).toString()  + " verb: " + verb + " result: " + result);
         
         return result;
     }
@@ -247,7 +236,6 @@ public class VerbTool {
        
         if( hashPersonTense.containsKey(person) 
             && verb_conjugate(v, hashPersonTense.get(person), negate).trim().length() > 0){
-LOG.log(Level.INFO, hashPersonTense.get(person) + " LENGTH > 0 person " + person  + "verb_past: " +verb_conjugate(v, hashPersonTense.get(person), negate) );
             return verb_conjugate(v, hashPersonTense.get(person), negate);
         }
 

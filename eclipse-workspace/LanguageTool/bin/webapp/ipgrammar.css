@@ -120,3 +120,18 @@ max-width:300px;
     background-color: rgb(255, 255, 157);
     border-bottom:1px solid orange;
 }
+#dictionaryForm{
+	margin:10px 0 0 0;
+}
+
+#dictionaryForm .formRow {
+	height:46px;
+}
+
+#dictionaryForm .formRow input[type=text]{
+	padding:5px;
+}
+
+#btnAddWord, #btnSearchWord{
+	width:120px;
+}

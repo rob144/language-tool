@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import morfologik.tools.FSADumpTool;
 
+@SuppressWarnings("serial")
 public class DictionaryServlet extends HttpServlet {
     
     private final String _dictionaryLocation = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/english.dict";
-    private POSDictionary dict = new POSDictionary();
+    private POSDictionary _dict = new POSDictionary();
     
     public DictionaryServlet () throws FileNotFoundException, IOException {
     }
@@ -33,14 +34,14 @@ public class DictionaryServlet extends HttpServlet {
         String output = "No output generated";
         
         if (req.getParameter("add") != null)
-            if (!dict.searchWord(req.getParameter("add"))) {
-                dict.addWord(req.getParameter("add"));
+            if (!_dict.searchWord(req.getParameter("add"))) {
+                _dict.addWord(req.getParameter("add"));
                 output = "Word added";
             } else
                 output = "Item exists, word not added";
         
         if (req.getParameter("search") != null) {
-            if (dict.searchWord(req.getParameter("search")))
+            if (_dict.searchWord(req.getParameter("search")))
                 output = "Item exists";
             else
                 output = "Item does not exist";

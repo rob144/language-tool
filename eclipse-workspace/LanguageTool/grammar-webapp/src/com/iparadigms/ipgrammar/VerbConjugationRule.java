@@ -56,8 +56,6 @@ public class VerbConjugationRule extends EnglishRule {
 
     @Override
     public RuleMatch[] match(final AnalyzedSentence sentence) {
-   
- LOG.log(Level.INFO, "Sentence " + sentence.toString() );
 
         final List<RuleMatch> ruleMatches = new ArrayList<>();
         final AnalyzedTokenReadings[] tokens = sentence.getTokensWithoutWhitespace();
@@ -66,8 +64,6 @@ public class VerbConjugationRule extends EnglishRule {
       
             AnalyzedTokenReadings currentToken = tokens[i];
             AnalyzedTokenReadings prevToken = tokens[i-1];
- 
- LOG.log(Level.INFO, "tokens.length: " + tokens.length  + " token info: " + i + " " + currentToken.toString() );
             
             /* Check if the word before the previous word is a contraction 
              * e.g. shouldn't, can't, wouldn't etc. */

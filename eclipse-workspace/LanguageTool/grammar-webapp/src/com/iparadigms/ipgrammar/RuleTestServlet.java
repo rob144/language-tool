@@ -11,7 +11,6 @@ import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
 import org.languagetool.language.BritishEnglish;
 import org.languagetool.rules.Rule;
-import org.languagetool.rules.en.EnglishPatternRuleTest;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.patterns.PatternRuleLoader;
 import org.languagetool.rules.patterns.PatternRule;
@@ -25,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.iparadigms.ipgrammar.VerbConjugationRule;
 
+@SuppressWarnings("serial")
 public class RuleTestServlet extends HttpServlet{
     
     //Logic control variables
@@ -134,7 +134,8 @@ writeLog("TESTING IP RULE " + x + " of " + ruleIdsIP.size());
             matchesCount += matches.size();
             returnText += ruleIdsIP.get(x) + ", \t" + matches.size() + "\n";
         }
-        returnText += "##########################\nRules checked : " + ruleIdsIP.size() + "\tTotal number of matches : " + matchesCount;
+        returnText += "##########################\nRules checked : " 
+        		+ ruleIdsIP.size() + "\tTotal number of matches : " + matchesCount;
         return returnText;
     }
     

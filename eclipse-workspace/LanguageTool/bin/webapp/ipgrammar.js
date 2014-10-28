@@ -269,11 +269,13 @@ $( document ).ready(function() {
     });   
 
     $( "#btnAddWord" ).click(function() {
-        $.ajax({
+        var word = $( "#inputTextDictAdd" ).val();
+    	if($.trim(word).length <= 0) return;
+    	$.ajax({
             type: 'GET',
             dataType: 'text',
-            url: '/exportdictionary',
-            data: {add : $( "#inputTextDictAdd" ).val()},
+            url: '/dictionary',
+            data: { add : word },
             success: function( xml ){
                 $('#functionResult').text(xml);
             },
@@ -286,10 +288,12 @@ $( document ).ready(function() {
     });
     
     $( "#btnSearchWord" ).click(function() {
+    	var word = $( "#inputTextDictSearch" ).val();
+    	if($.trim(word).length <= 0) return;
         $.ajax({
             type: 'GET',
             dataType: 'text',
-            url: '/exportdictionary',
+            url: '/dictionary',
             data: {search : $( "#inputTextDictSearch" ).val()},
             success: function( xml ){
                 $('#functionResult').text(xml);

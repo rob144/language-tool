@@ -1,15 +1,7 @@
 package com.iparadigms.ipgrammar;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -40,13 +32,11 @@ public class ServerManager {
         
         ServletContextHandler chTest = new ServletContextHandler();
         chTest.setContextPath("/test");
-        RuleTestServlet testServlet = new RuleTestServlet();
-        chTest.addServlet(new ServletHolder(testServlet), "/");
+        chTest.addServlet(new ServletHolder(new RuleTestServlet()), "/");
         
         ServletContextHandler chDict = new ServletContextHandler();
-        chDict.setContextPath("/exportdictionary");
-        DictionaryServlet dictExport = new DictionaryServlet();
-        chDict.addServlet(new ServletHolder(dictExport), "/");
+        chDict.setContextPath("/dictionary");
+        chDict.addServlet(new ServletHolder(new DictionaryServlet()), "/");
         
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] { rh, chEnGb, chEnUs, chTest, chDict });

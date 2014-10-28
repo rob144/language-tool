@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Implementation-Date: 2014-10-26 22:03
+Built-By: languagetool
+Build-Jdk: 1.7.0_07
+Class-Path: ./ languagetool-server.jar libs/languagetool-core.jar libs
+ /commons-lang.jar libs/jna.jar libs/morfologik-fsa.jar libs/morfologi
+ k-speller.jar libs/morfologik-stemming.jar libs/segment.jar libs/comm
+ ons-logging.jar libs/tika-core.jar libs/lucene-core.jar libs/language
+ tool-gui-commons.jar libs/languagetool-commandline.jar libs/languaget
+ ool-server.jar libs/language-all.jar libs/language-en.jar libs/opennl
+ p-tools.jar libs/opennlp-maxent.jar libs/opennlp-tokenize-models.jar 
+ libs/opennlp-postag-models.jar libs/opennlp-chunk-models.jar libs/lan
+ guage-fa.jar libs/language-fr.jar libs/hunspell-native-libs.jar libs/
+ language-de.jar libs/jwordsplitter.jar libs/language-de-DE-x-simple-l
+ anguage.jar libs/language-pl.jar libs/language-ca.jar libs/language-i
+ t.jar libs/language-br.jar libs/language-nl.jar libs/language-pt.jar 
+ libs/language-ru.jar libs/language-ast.jar libs/language-be.jar libs/
+ language-zh.jar libs/ictclas4j.jar libs/cjftransform.jar libs/languag
+ e-da.jar libs/language-eo.jar libs/language-gl.jar libs/language-el.j
+ ar libs/language-is.jar libs/language-ja.jar libs/lucene-gosen-ipadic
+ .jar libs/language-km.jar libs/language-lt.jar libs/language-ml.jar l
+ ibs/language-ro.jar libs/language-sk.jar libs/language-sl.jar libs/la
+ nguage-es.jar libs/language-sv.jar libs/language-ta.jar libs/language
+ -tl.jar libs/language-uk.jar libs/morfologik-tools.jar libs/hppc.jar 
+ libs/morfologik-polish.jar libs/commons-cli.jar libs/languagetool-cor
+ e-tests.jar libs/junit.jar libs/hamcrest-core.jar
+ComponentVersion: 2.8-SNAPSHOT
+Created-By: Apache Maven 3.0.4
+Main-Class: org.languagetool.gui.Main
+Archiver-Version: Plexus Archiver
+
