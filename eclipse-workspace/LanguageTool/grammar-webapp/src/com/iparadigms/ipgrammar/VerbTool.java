@@ -66,7 +66,9 @@ public class VerbTool {
         
         for(int i = 0; i < data.length; i++){
             String[] a = data[i].trim().split(",");
-            verb_tenses.put(a[0], a);
+if(data[i].toLowerCase().contains("better")) System.out.println("data: " + data[i]);
+//if(a.length >= 2) System.out.println("load array for verb" + a[0] + " length: " + a.length );
+            if( a.length >= 2) verb_tenses.put(a[0], a);
         }
 
         /* Each verb can be lemmatised:
@@ -178,6 +180,14 @@ public class VerbTool {
         verb = verb_infinitive(verb);
         int index = verb_tenses_keys.get(tense);
         if(negate) index += verb_tenses_keys.size();
+        if(verb.equals("better")){
+            System.out.println("Verb : " + verb + "\nIndex : " + index);
+            String[] tenses = verb_tenses.get(verb);
+            System.out.println("array length: " + tenses.length);
+            for(String t : tenses){
+                System.out.println("tense: " + t);
+            }
+        }
         String result = verb_tenses.get(verb)[index];
         
         return result;

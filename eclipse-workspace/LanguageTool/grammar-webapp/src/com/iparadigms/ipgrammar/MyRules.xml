@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules lang="en" xsi:noNamespaceSchemaLocation="../../../../../../../../../languagetool-core/src/main/resources/org/languagetool/rules/rules.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <category name="iP_Rules" type="grammar">
-        <rule id="WITH_TO" name="With (missing word?) to">
+        <rule id="IP_WITH_TO" name="With (missing word?) to">
             <pattern>
                 <marker>
                     <token>with</token>
@@ -13,7 +13,7 @@
             <example type="correct">He went with James to see the doctor.</example>
             <example type="incorrect">He went <marker>with to</marker> see the doctor.</example>
         </rule>
-        <rule id="COMMA_WERE" name="'Were' directly after comma">
+        <rule id="IP_COMMA_WERE" name="'Were' directly after comma">
             <pattern>
                 <token>,</token>
                 <marker>
@@ -25,7 +25,7 @@
             <example type="correct">After work, we're going out for lunch.</example>
             <example type="incorrect">After work, <marker>were</marker> going home.</example>
         </rule>
-        <rule id="WONT_MISSING_APOSTROPHE" name="Wont missing apostrophe.">
+        <rule id="IP_WONT_MISSING_APOSTROPHE" name="Wont missing apostrophe.">
             <pattern>
                 <or>
                     <token regexp="yes">i|she|he|they|it</token>
@@ -40,7 +40,7 @@
             <example type="correct">She said she won't make it to the show.</example>
             <example type="incorrect">She said she <marker>wont</marker> make it to the show.</example>
         </rule>
-        <rule id="MAY_MONTH_HOMOGRAPH" name="May month homograph">
+        <rule id="IP_MAY_MONTH_HOMOGRAPH" name="May month homograph">
             <pattern case_sensitive="yes">
                 <token regexp="yes">(?iu)in|from|of</token>
                 <marker>
@@ -52,7 +52,7 @@
             <example type="correct">From May there will be a new procedure in place.</example>
             <example type="incorrect">From <marker>may</marker> there will be a new procedure in place.</example>
         </rule>
-        <rule id="MARCH_MONTH_HOMOGRAPH" name="March month homograph">
+        <rule id="IP_MARCH_MONTH_HOMOGRAPH" name="March month homograph">
             <pattern case_sensitive="yes">
                 <token regexp="yes">(?iu)in|from|of</token>
                 <marker>
@@ -64,13 +64,13 @@
             <example type="correct">From March there will be a new procedure in place.</example>
             <example type="incorrect">From <marker>march</marker> there will be a new procedure in place.</example>
         </rule>
-        <rulegroup id="IP_1_MISSING_SENT_END_STOP" name="Missing sentence end stop.">
+        <rulegroup id="IP_MISSING_SENT_END_STOP" name="Missing sentence end stop.">
             <rule>
                 <pattern>
                     <token postag="SENT_START"/>
                     <token postag="VB|MD|VBZ|VBP" postag_regexp="yes" negate_pos="yes" skip="-1"/>
                     <marker>
-                        <token postag="SENT_END" regexp="yes" negate="yes">[.]|!|[?]</token><!-- A declarative sentence may also be interrogative when spoken e.g. You need some help. vs You need some help? -->
+                        <token postag="SENT_END" regexp="yes" negate="yes">\.|\?|!|"</token><!-- A declarative sentence may also be interrogative when spoken e.g. You need some help. vs You need some help? -->
                     </marker>
                 </pattern>
                 <message>Declarative sentences must end with a full stop, or, in some cases, an exclamation mark.  Interrogative sentences should end with a question mark.</message>
@@ -78,7 +78,7 @@
                 <example type="correct">The bird flew away.</example>
                 <example type="incorrect">The bird flew <marker>away</marker></example>
             </rule>
-            <rule>
+            <!-- <rule>
                 <pattern>
                     <marker>
                         <or>
@@ -88,17 +88,17 @@
                         <token postag="DT"/>
                     </marker>
                     <and>
-                        <token postag="NN:UN" postag_regexp="yes" negate_pos="yes" />
-                        <token postag="MD" postag_regexp="yes" negate_pos="yes" />
+                        <token postag="NN:UN" negate_pos="yes" />
+                        <token postag="MD" negate_pos="yes" />
                     </and>
                 </pattern>
                 <message>Declarative sentences must conclude with an appropriate end stop, or, in some cases, an exclamation mark.  Interrogative sentences should end with a question mark.  Consider inserting a full stop, question mark or comma.</message>
                 <short>Missing full stop, exclamation mark or question mark.</short>
                 <example type="correct">The text raises complex issues. Many argue it's not the author's finest work.</example>
                 <example type="incorrect">The text raises complex <marker>issues Many</marker> argue it's not the author's finest work.</example>
-            </rule>
+            </rule> -->
         </rulegroup>
-        <rule id="IP_2_INTERROGATIVE_SENT_END_QUESTION_MARK" name="Interrogative sentences must end with a question mark">
+        <rule id="IP_INTERROGATIVE_SENT_END_QUESTION_MARK" name="Interrogative sentences must end with a question mark">
             <pattern>
                 <token postag="SENT_START"/>
                 <or><!-- Sentence that starts with a verb e.g. Can, Should, Is ...etc. -->
@@ -114,7 +114,7 @@
             <example type="correct">Is a paperless office really possible?</example>
             <example type="incorrect">Is a paperless office really possible<marker>.</marker></example>
         </rule>
-        <rule id="IP_3_INTERROGATIVE_WH_SENT_END_QUESTION_MARK" name="Interrogative sentances starting with WH-adverb must end with a question mark">
+        <rule id="IP_INTERROGATIVE_WH_SENT_END_QUESTION_MARK" name="Interrogative sentances starting with WH-adverb must end with a question mark">
             <pattern case_sensitive="yes">
                 <token postag="SENT_START"/>
                 <token regexp="yes" skip="-1">Who|Where|What|When|Why|How</token>
@@ -127,7 +127,7 @@
             <example type="correct">Who is that?</example>
             <example type="incorrect">Who is that<marker>.</marker></example>
         </rule>
-        <rule id="IP_5_US_COUNTRY_ACRONYM" name="Capitalize US country acronym.">
+        <rule id="IP_US_COUNTRY_ACRONYM" name="Capitalize US country acronym.">
             <pattern case_sensitive="yes">
                 <token regexp="yes" min="0">(?iu)in|to|from|on|with|inside</token>
                 <token>the</token>
@@ -141,7 +141,7 @@
             <example type="correct">In the US there are many opportunities.</example>
             <example type="incorrect">In the <marker>us</marker> there are many opportunities.</example>
         </rule>
-        <rule id="IP_7_DETERMINER_ANOTHER_OTHER" name="Determiners: another vs. other.">
+        <rule id="IP_DETERMINER_ANOTHER_OTHER" name="Determiners: another vs. other.">
             <pattern>
                 <marker>
                     <token postag="DT">another</token>
@@ -155,7 +155,7 @@
             <example type="correct">There are other apples in the bowl.</example>
             <example type="incorrect">There are <marker>another</marker> apples in the bowl.</example>
         </rule>
-        <rule id="IP_8_OBJECT_PRONOUNS_COME_AFTER_VERB" name="Object pronouns come after not before verbs.">
+        <rule id="IP_OBJECT_PRONOUNS_COME_AFTER_VERB" name="Object pronouns come after not before verbs.">
             <antipattern>
                 <!-- "She makes me lose my mind" is valid -->
                 <token postag="VB.*" postag_regexp="yes"/>
@@ -186,7 +186,7 @@
             <example type="correct">Both soldiers were applauded by the crowd.</example>
             <example type="incorrect">Both soldier<marker>'</marker>s were applauded by the crowd.</example>
         </rule>
-        <rulegroup id="IP_17_APOSTROPHES_IN_POSSESSIVE_PRONOUNS" name="Apostrophes in possessive pronouns">
+        <rulegroup id="IP_APOSTROPHES_IN_POSSESSIVE_PRONOUNS" name="Apostrophes in possessive pronouns">
             <rule>
                 <pattern>
                     <or>
@@ -217,7 +217,7 @@
                 <example type="incorrect">The robot malfunctioned as it<marker>'</marker>s circuit board failed.</example>
             </rule>
         </rulegroup>
-        <rulegroup id="IP_18_PLACEMENT_OF_POSSESSIVE_ADJECTIVES" name="Correct placement of possessive adjectives">
+        <rulegroup id="IP_PLACEMENT_OF_POSSESSIVE_ADJECTIVES" name="Correct placement of possessive adjectives">
             <rule>
                 <pattern case_sensitive="no">
                     <token postag="PRP$" chunk="E-NP-singular"><exception>her</exception></token>
@@ -240,7 +240,7 @@
                 <example type="incorrect">The idea is all <marker>her</marker>.</example>
             </rule>
         </rulegroup> 
-        <rulegroup id="IP_9_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
+        <rulegroup id="IP_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
             <rule>
                 <pattern>
                     <token postag_regexp="yes" postag="VB|VBD|VBZ|VBP"/>
@@ -364,7 +364,7 @@
                 <example type="correct">Many trolls are obvious.</example>
                 <example type="correct">Obvious trolls are obvious.</example>
                 <example type="correct">The obvious troll is obvious.</example>
-                <example type="incorrect"><marker>Obvious troll</marker> is obvious.</example>
+                <example type="incorrect">Obvious <marker>troll</marker> is obvious.</example>
             </rule>
         </rulegroup>
         <rulegroup id="SHOULD_HAVE_POSSESSIVE_PREPOSITION" name="Should have possessive preposition">
@@ -731,5 +731,54 @@
                 <example type="incorrect">They brought <marker>they're</marker> lunch.</example>
             </rule>
         </rulegroup>
+<!--         <rulegroup id="IP_VERB_CONJUGATION_ERROR" name="Verb conjugation errors">
+            <rule>
+                <antipattern>
+                    <token postag="MD"/>
+                    <token>'</token>
+                    <token>t</token>
+                    <token regexp="yes">i|we</token>
+                </antipattern>
+                <pattern>
+                    <token regexp="yes">i|we<exception scope="previous" postag="MD"/></token>
+                    <marker>
+                        <token postag_regexp="yes" postag="VBG|VBN|VBZ">be<exception postag_regexp="yes" postag="VBD|VBP"/></token>
+                    </marker>
+                </pattern>
+                <message>Verb object should match subject, conjugation error.</message>
+                <short>Verb conjugation error.</short>
+                <example type="correct">I am here.</example>
+                <example type="correct">We ate here.</example>
+                <example type="correct">We have arrived.</example>
+                <example type="incorrect">I <marker>be</marker> here.</example>
+                <example type="incorrect">We <marker>eating</marker> here.</example>
+                <example type="incorrect">We <marker>eaten</marker> here.</example>
+                <example type="incorrect">We <marker>eats</marker> here.</example>
+                <example type="correct">Shouldn't I be here?</example>
+                <example type="correct">Should I be here?</example>
+            </rule>
+            <rule>
+                <pattern>
+                </pattern>
+            <message>Verb object should match subject, conjugation error.</message>
+            <short>Verb conjugation error.</short>
+            </rule>
+            <rule>
+                <pattern>
+                    <token postag="MD"/>
+                    <token min="0">'</token>
+                    <token min="0">t</token>
+                    <token regexp="yes">i|you|he|she|it|one|we|they</token>
+                    <marker>
+                        <token postag_regexp="yes" postag="VBD|VBG|VBN|VBP|VBZ"><exception postag="VB"/></token>
+                    </marker>
+                </pattern>
+                <message>Verb object should match subject, conjugation error.</message>
+                <short>Verb conjugation error.</short>
+                <example type="correct">Couldn't I be here?</example>
+                <example type="correct">Couldn't I have this?</example>
+                <example type="correct">Couldn't she jump over?</example>
+            </rule>
+        </rulegroup> -->
     </category>
 </rules>
