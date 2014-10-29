@@ -1,7 +1,9 @@
 package com.iparadigms.ipgrammar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Level;
 
 import javax.servlet.ServletException;
@@ -18,33 +20,63 @@ public class DictionaryServlet extends HttpServlet {
     private POSDictionary _dict = new POSDictionary();
     
     public DictionaryServlet () throws FileNotFoundException, IOException {
+        //exportDictionary();
     }
     
-    public String exportDictionary () {
+    public void exportDictionary () {
         try {
-            //FSADumpTool.main("--raw-data", "-d", dictionaryLocation);
+            PrintStream old = System.out;
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos);
+            System.setOut(ps);
+            
+            FSADumpTool.main("--raw-data", "-d", _dictionaryLocation);
+            System.out.flush();
+            System.setOut(old);
+            
+            String[] lineArray = baos.toString().split("\n");
+            String[][] multiArray = new String[lineArray.length][];
+            for (int x = 0; x < lineArray.length; x++)
+                multiArray[x] = lineArray[x].split("\\+");
+            
         } catch (Exception ex) { writeLog("" + ex); }
-        
-        return "";
     }
+    
+    /*public void buildDictionary () {
+        POSDictionaryBuilder builder = new POSDictionaryBuilder(infoFilePath);
+        
+        builder.build(dumpFilePath);
+    }*/
     
     @Override
-    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws IOException {
         
-        String output = "No output generated";
+        String output = "Invalid get request";
         
         if (req.getParameter("add") != null)
-            if (!_dict.searchWord(req.getParameter("add"))) {
+            if (!_dict.searchWord(req.getParameter("add").split(" ")[0])) {
                 _dict.addWord(req.getParameter("add"));
                 output = "Word added";
             } else
                 output = "Item exists, word not added";
         
         if (req.getParameter("search") != null) {
-            if (_dict.searchWord(req.getParameter("search")))
+            if (_dict.searchWord(req.getParameter("search").split(" ")[0]))
                 output = "Item exists";
             else
                 output = "Item does not exist";
+        }
+        
+        if (req.getParameter("build") != null) {
+            // TODO check if the added items actually end up in dump prior to it being deleted
+            try {
+                _dict.buildDictionary();
+                output = "Dictionary built";
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         
         resp.getWriter().print(output);

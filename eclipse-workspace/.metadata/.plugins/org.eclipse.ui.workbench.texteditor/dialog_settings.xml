@@ -13,18 +13,19 @@
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="IP_INCORRECT" key="selection"/>
+		<item value="new File" key="selection"/>
 		<list key="findhistory">
-			<item value="IP_INCORRECT"/>
-			<item value="INTERROG"/>
-			<item value="&lt;and"/>
-			<item value="and/&gt;"/>
-			<item value="and/"/>
-			<item value="and"/>
-			<item value="&lt;or"/>
-			<item value="skip"/>
+			<item value="new File"/>
+			<item value="testIpRulesFalsePositive"/>
+			<item value="doCheck"/>
+			<item value="WP$"/>
+			<item value="PRP$"/>
+			<item value="|PRP$"/>
+			<item value="PRP$|"/>
+			<item value="exception postag_regexp"/>
 		</list>
 		<list key="replacehistory">
+			<item value="ipRulesFalsePositive"/>
 			<item value="    "/>
 			<item value=""/>
 			<item value="Modal verb should not be followed by &apos;of&apos;."/>

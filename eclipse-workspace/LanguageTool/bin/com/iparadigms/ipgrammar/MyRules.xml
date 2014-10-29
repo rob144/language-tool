@@ -247,7 +247,7 @@
                     <marker>
                         <token postag="TO"/>
                     </marker>
-                    <token chunk="B-NP-plural"><exception postag_regexp="yes" postag="CD|DT"/> </token>
+                    <token chunk="B-NP-plural"><exception postag_regexp="yes" postag="CD|DT|PRP\$"/><exception/></token>
                 </pattern>
                 <message>Use 'two' instead of 'to' if you mean the number two.</message>
                 <short>Use 'two' instead of 'to' if you mean the number two.</short>
@@ -270,13 +270,13 @@
             <rule>
                 <pattern>
                     <or>
-                        <token postag_regexp="yes" negate_pos="yes" postag="NN|NNS|NN:U|NN:UN|NP|NNP|PRP$"/>
+                        <token postag_regexp="yes" negate_pos="yes" postag="NN|NNS|NN:U|NN:UN|NP|NNP|PRP\$"/>
                         <token regexp="yes">my|our|your|their</token>
                     </or>
                     <marker>
                         <token>too</token>
                     </marker>
-                    <token postag_regexp="yes" negate_pos="yes" postag="JJ|NN|SENT_END"/>
+                    <token postag_regexp="yes" negate_pos="yes" postag="JJ|RB|DT|NN|SENT_END"><exception postag_regexp="yes" postag="JJ||RB|DT|NN|SENT_END"/></token>
                 </pattern>
                 <message>Incorrect use of 'too'. Did you mean 'to' or 'two'?</message>
                 <short>Incorrect use of 'too'.</short>
@@ -672,7 +672,7 @@
                     <marker>
                         <token>their</token>
                     </marker>
-                    <token postag_regexp="yes" postag="CC|DT|EX|IN|MD|PDT|PRP|PRP$|RB|RP|TO|VB|VBD|VBG|VBN|VBP|VBZ|WDT|WP|WP$|WRB">
+                    <token postag_regexp="yes" postag="CC|DT|EX|IN|MD|PDT|PRP|PRP\$|RB|RP|TO|VB|VBD|VBG|VBN|VBP|VBZ|WDT|WP|WP\$|WRB">
                         <exception postag_regexp="yes" postag="JJ|NN:UN|RBS"/>
                     </token>
                 </pattern>

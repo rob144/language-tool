@@ -33,7 +33,7 @@ public class ServerManager {
         ServletContextHandler chTest = new ServletContextHandler();
         chTest.setContextPath("/test");
         chTest.addServlet(new ServletHolder(new RuleTestServlet()), "/");
-        
+
         ServletContextHandler chDict = new ServletContextHandler();
         chDict.setContextPath("/dictionary");
         chDict.addServlet(new ServletHolder(new DictionaryServlet()), "/");

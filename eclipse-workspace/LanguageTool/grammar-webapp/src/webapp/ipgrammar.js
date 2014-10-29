@@ -304,5 +304,23 @@ $( document ).ready(function() {
                 console.log(errorMessage);
             }
         });
-    }); 
+    });
+    
+    $( "#btnBuildDictionary" ).click(function() {
+    
+        $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: '/dictionary',
+            data: {build : ""},
+            success: function( xml ){
+                $('#functionResult').text(xml);
+            },
+            error: function(xhr, textStatus, error){
+                var errorMessage = 'Error connecting to the LanguageTool server.';
+                alert(errorMessage);
+                console.log(errorMessage);
+            }
+        });
+    });   
 });

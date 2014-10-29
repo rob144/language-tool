@@ -1,0 +1,12 @@
+package com.iparadigms.ipgrammar;
+import org.languagetool.language.English;
+
+public class IPEnglish extends English {
+    
+    //Pass in instance of IPEnglishTagger
+    public setTagger(Tagger theTagger){
+        tagger = theTagger;
+    }
+    
+
+}

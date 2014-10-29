@@ -28,7 +28,7 @@ import com.iparadigms.ipgrammar.VerbConjugationRule;
 public class RuleTestServlet extends HttpServlet{
     
     //Logic control variables
-    private final boolean testEachIPRule = false;
+    private final boolean testEveryIPRule = false;
     private final boolean testProcessingTime = false;
     
     private final int CONTEXT_SIZE = 40; // characters
@@ -69,14 +69,14 @@ public class RuleTestServlet extends HttpServlet{
         if (testProcessingTime) {
             return testRulesProcessTime();
         } else {
-            if (testEachIPRule)
-                return testEachIPRule();
+            if (testEveryIPRule)
+                return ipRulesFalsePositive();
             else
-                return testIPRule(ruleId, lineTestStart, lineTestLimit);
+                return testIPRules(ruleId, lineTestStart, lineTestLimit);
         }
     }
     
-    private String testIPRule(String ruleId, int lineStart, int lineLimit) throws IOException {
+    private String testIPRules(String ruleId, int lineStart, int lineLimit) throws IOException {
         disableAllActiveRules();
         
         if (ruleId.equals("###"))
@@ -115,7 +115,7 @@ writeLog("Number of matches: " + matches.size());
         return formattedString;
     }
     
-    private String testEachIPRule () throws IOException {
+    private String ipRulesFalsePositive () throws IOException {
 writeLog("TESTING EACH IP RULE");
         String corpusText = _engCorpus.getLinesToString(1000);
         disableAllActiveRules();
@@ -160,6 +160,26 @@ writeLog("TESTING IP RULE " + x + " of " + ruleIdsIP.size());
             )
         );
     }
+    
+    /*@Override
+    public void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        
+        _engCorpus = new CorpusTextHolder (req.getParameter("langcode"));
+        
+        if (req.getParameter("processingtime") != null)
+            testRulesProcessTime();
+        
+        if (req.getParameter("ipfalsepositive") != null)
+            ipRulesFalsePositive();
+        
+        if (req.getParameter("ruleid") != null) {
+            testIPRules(req.getParameter("ruleid"),
+                    Integer.parseInt(req.getParameter("lineteststart")),
+                    Integer.parseInt(req.getParameter("linetestlimit")));
+        }
+        
+        resp.getWriter().print("");
+    }*/
     
     private void writeLog(String text){
         LOG.log(Level.INFO, text);
