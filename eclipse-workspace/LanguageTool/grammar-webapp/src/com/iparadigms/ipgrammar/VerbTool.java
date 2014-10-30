@@ -6,13 +6,9 @@ package com.iparadigms.ipgrammar;
 */
 
 import java.util.*;
-import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -142,9 +138,6 @@ public class VerbTool {
             }else{
                 valid_conjugations.add( verb_past(infinitive, person, false) );
             }
-            
-            String listString = "";
-            for (String s : valid_conjugations){ listString += s + "\t"; }
 
             for (String string : valid_conjugations) {
                 if(string.matches(verb)){

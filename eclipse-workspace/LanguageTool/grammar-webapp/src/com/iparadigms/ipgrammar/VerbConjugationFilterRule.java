@@ -1,6 +1,5 @@
 package com.iparadigms.ipgrammar;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,17 +9,11 @@ import com.iparadigms.ipgrammar.VerbTool;
 import org.languagetool.rules.en.EnglishRule;
 import org.languagetool.rules.patterns.RuleFilter;
 import org.languagetool.AnalyzedSentence;
-import org.languagetool.AnalyzedToken;
 import org.languagetool.AnalyzedTokenReadings;
-import org.languagetool.JLanguageTool;
-import org.languagetool.rules.Category;
 import org.languagetool.rules.Example;
 import org.languagetool.rules.ITSIssueType;
 import org.languagetool.rules.RuleMatch;
-import org.languagetool.tools.StringTools;
-
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 /**
  * Check if a conjugated verb agrees with the subject of the sentence

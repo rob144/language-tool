@@ -4,7 +4,6 @@ import java.util.List;
 import java.io.IOException;
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
-import org.languagetool.language.BritishEnglish;
 import org.languagetool.rules.en.EnglishPatternRuleTest;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.patterns.PatternRuleLoader;

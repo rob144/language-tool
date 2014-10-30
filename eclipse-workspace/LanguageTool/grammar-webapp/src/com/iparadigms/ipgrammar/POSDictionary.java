@@ -13,8 +13,12 @@ import org.languagetool.dev.POSDictionaryBuilder;
 
 public class POSDictionary {
     
-    private final String dictionaryLocation = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/dictionary.dump";
     private ArrayList<String[]> _posDictionary = new ArrayList<String[]>();
+    private String _resourcesDir = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/";
+    private String _pathToBinaryDict = _resourcesDir + "english.dict";
+    private String _pathToInfoFile = _resourcesDir + "english.info";
+    private String _pathToTempDict = _resourcesDir + "temp.dump";
+    private String _pathToTextDict = _resourcesDir + "dictionary.dump";
     
     public POSDictionary () throws FileNotFoundException, IOException {
         populatePosDictionary();
@@ -39,15 +43,16 @@ public class POSDictionary {
     }
     
     public void buildDictionary () throws Exception {
-        String temp = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/temp.dump";
-        File tempDump = new File (temp);
-        FileWriter write = new FileWriter(temp, false);
+        File tempDump = new File (_pathToTempDict);
+        FileWriter write = new FileWriter(_pathToTempDict, false);
         PrintWriter printLine = new PrintWriter(write);
         //getting lines and formatting them for .dump useable by FSADump
         String line = "";
         for (int x = 0; x < _posDictionary.size(); x++) {
             line = "";
-            line = _posDictionary.get(x)[0].toString() + "\t" + _posDictionary.get(x)[1].toString() + "\t" + _posDictionary.get(x)[2].toString();
+            line = _posDictionary.get(x)[0].toString() + "\t" 
+            	+ _posDictionary.get(x)[1].toString() + "\t" 
+            	+ _posDictionary.get(x)[2].toString();
             //adding to temp.dump
             printLine.println(line);
         }
@@ -55,14 +60,14 @@ public class POSDictionary {
         printLine.close();
         
         //.dump being converted into binary dictionary
-        POSDictionaryBuilder pos = new POSDictionaryBuilder(new File("grammar-webapp/src/com/iparadigms/ipgrammar/resources/english.info"));
-        pos.build(new File(temp)).renameTo( new File("grammar-webapp/src/com/iparadigms/ipgrammar/resources/dictionary.dict"));
+        POSDictionaryBuilder pos = new POSDictionaryBuilder(new File(_pathToInfoFile));
+        pos.build(new File(_pathToTempDict)).renameTo( new File(_pathToBinaryDict));
         tempDump.delete();
     }
     
     private void populatePosDictionary () throws FileNotFoundException, IOException {
         String line = "";
-        BufferedReader dictReader = new BufferedReader(new FileReader(dictionaryLocation));
+        BufferedReader dictReader = new BufferedReader(new FileReader(_pathToTextDict));
         while ((line = dictReader.readLine()) != null){
             String[] items = line.split("\t");
             addWord (items[0], items[1], items[2]);

@@ -2,15 +2,11 @@ package com.iparadigms.ipgrammar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
-
 import morfologik.tools.FSADumpTool;
 
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
-import org.languagetool.rules.patterns.PatternRule;
 import org.languagetool.tagging.en.EnglishTagger;
 import org.languagetool.dev.POSDictionaryBuilder;
 
@@ -18,8 +14,11 @@ public class UnitTests {
 
     private Language _lang;
     private JLanguageTool _langTool;
-    private List<PatternRule> _myRules;
-
+    private String _resourcesDir = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/";
+    private String _pathToBinaryDict = _resourcesDir + "english.dict";
+    private String _pathToTextDict = _resourcesDir + "dictionary.dump";
+    private String _pathToInfoFile = _resourcesDir + "english.info";
+    
     public UnitTests() throws Exception{
         if (dumpDictionaryToMemory()
                 && testSetDictionaryFileName()
@@ -36,7 +35,7 @@ public class UnitTests {
         PrintStream ps = new PrintStream(baos);
         System.setOut(ps);
         
-        FSADumpTool.main("--raw-data", "-d", "grammar-webapp/src/com/iparadigms/ipgrammar/resources/english.dict");
+        FSADumpTool.main("--raw-data", "-d", _pathToBinaryDict);
         System.out.flush();
         System.setOut(old);
         
@@ -67,13 +66,10 @@ public class UnitTests {
     }
     
     public boolean testPosDictionaryBuilder() throws Exception {
-        POSDictionaryBuilder pos = new POSDictionaryBuilder(new File("grammar-webapp/src/com/iparadigms/ipgrammar/resources/english.info"));
-        pos.build(
-                new File(
-                        "grammar-webapp/src/com/iparadigms/ipgrammar/resources/dictionary.dump")).renameTo(
-                                new File("grammar-webapp/src/com/iparadigms/ipgrammar/resources/dictionary.dict"));
+        POSDictionaryBuilder pos = new POSDictionaryBuilder(new File(_pathToInfoFile));
+        pos.build(new File(_pathToTextDict)).renameTo(new File(_pathToBinaryDict));
         
-        if (new File("grammar-webapp/src/com/iparadigms/ipgrammar/resources/dictionary.dict").exists())
+        if (new File(_pathToBinaryDict).exists())
             return true;
         else
             return false;

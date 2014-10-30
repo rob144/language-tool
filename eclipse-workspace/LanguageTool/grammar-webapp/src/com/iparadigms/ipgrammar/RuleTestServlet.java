@@ -9,12 +9,10 @@ import java.util.logging.Level;
 
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
-import org.languagetool.language.BritishEnglish;
 import org.languagetool.rules.Rule;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.patterns.PatternRuleLoader;
 import org.languagetool.rules.patterns.PatternRule;
-import org.languagetool.rules.patterns.PatternRuleTest;
 import org.languagetool.tools.RuleAsXmlSerializer;
 
 import javax.servlet.ServletException;
