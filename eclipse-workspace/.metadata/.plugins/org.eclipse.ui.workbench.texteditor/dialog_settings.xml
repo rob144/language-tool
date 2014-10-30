@@ -13,16 +13,16 @@
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="new File" key="selection"/>
+		<item value="corpus" key="selection"/>
 		<list key="findhistory">
-			<item value="new File"/>
-			<item value="testIpRulesFalsePositive"/>
-			<item value="doCheck"/>
-			<item value="WP$"/>
-			<item value="PRP$"/>
-			<item value="|PRP$"/>
-			<item value="PRP$|"/>
-			<item value="exception postag_regexp"/>
+			<item value="corpus"/>
+			<item value="formRow"/>
+			<item value="btnBuildDictionary"/>
+			<item value="ruleCompetenceOption"/>
+			<item value="processingTimeOption"/>
+			<item value="falsePositivesOption"/>
+			<item value="ruleLogicOption"/>
+			<item value="testRuleOption"/>
 		</list>
 		<list key="replacehistory">
 			<item value="ipRulesFalsePositive"/>

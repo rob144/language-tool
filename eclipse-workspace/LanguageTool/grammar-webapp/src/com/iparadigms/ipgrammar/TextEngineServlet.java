@@ -50,15 +50,6 @@ LOG.log(Level.INFO, "ADDING RULES.");
     }
     
     @Override
-    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-        EnglishPatternRuleTest enRuleTest  = new EnglishPatternRuleTest ();
-        enRuleTest.testRulesForLanguage(_lang);
-        
-        PatternRuleTest ruleTest = new PatternRuleTest ();
-        ruleTest.testGrammarRulesFromXML(_myRules, _langTool, _langTool, _lang);
-    }
-    
-    @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
 LOG.log(Level.INFO, "***Post Servlet****");
         

@@ -1,0 +1,155 @@
+body { padding:10px;font-family: Arial, Helvetica, sans-serif;}
+#pageContent { width:800px; margin:0 auto 0 auto; }
+h1 { margin:0; border:0; }
+#headerRow { height:50px; overflow:visible;  }
+#headerLeft { float:left; }
+#headerRight { float:right; }
+#buttonRow { width:100%; overflow:auto; margin:10px 0 15px 0; }
+#grammar-tool-title{
+    text-decoration:none;
+}
+#selectLang { 
+    float:left;
+    font-size:12pt;
+}
+#btnSubmitPost {
+    display:block; 
+    float:left; 
+    font-size:12pt;
+}
+#loadingDiv { display: none; width:200px; float:left; }
+#loadingMessage div { float:left; margin:0 0 0 10px; }
+#loadingImage img { width:18px; float:left; margin:0 0 0 10px; }
+h1 { font-size: 14pt; }
+h2 { font-size: 12pt; float:left; margin:0; padding:0; }
+.tab-content {
+	padding:5px 0 0 0;
+}
+#textFields { margin: 0 0 100px 0; }
+textarea {
+    clear:both;
+    font-family: "Courier New", Courier, monospace;
+    margin:0; 
+    padding:8px;
+    font-size:11pt;
+}
+p.line { margin:0; }
+table { 
+    border-collapse:collapse;
+    width:800px;
+    }
+th { padding: 4px; font-size:11pt; }
+td { padding: 4px; font-size:11pt; }
+#actionsRow { margin: 5px 0 5px 0; }
+a.tab { margin: 0 10px 5px 0; } 
+.tabRight { float:right; margin:0 0 0 5px; }
+#pagination { display:none; }
+#clearText { display:none; }
+#xmlTab { display:none; }
+#inputText {
+    display:block; 
+    width:800px;             
+}
+#textMarkedOuter {
+    padding:10px 0 0 0;
+    background-color:rgb(233, 233, 233);
+}
+#textMarked { 
+    position:relative;
+    font-family: "Courier New", Courier, monospace;
+    font-size:11pt;
+    width:700px;  
+    min-height:250px;
+    margin:0px auto 5px auto;
+    border:1px solid rgb(200, 200, 200);
+    padding:40px; 
+    background-color:white;
+}
+#textMarked span {
+    padding:2px 2px 0 2px;
+    background-color: rgb(255,255,0); 
+    border-radius: 4px;
+}
+#links { 
+    display:none; 
+    font-size:11pt;
+    width:780px;  
+    min-height:250px;
+    border:1px solid black;
+    padding:8px; 
+}
+#testText { display:none; }
+.myQtipStyle .qtip-content {
+font-size:14px;
+max-width:300px;
+}
+.popup{
+    display:none;
+    position:absolute;
+    top:0;right:-320px;
+    min-width:100px;
+    max-width:400px;
+    overflow:auto;
+    padding:3px;
+    z-index:100;
+    background-color:#fff;
+    border:1px solid black;
+    border-radius:4px;
+}
+.popup p {
+    margin:0;
+    font-family:"Times New Roman",Georgia,Serif;
+}
+.tip{
+    padding:10px 5px 10px 25px;
+    font-size:12pt;
+    background-color:#FFFFE3;
+    border:1px solid #B88D30;
+    border-radius:6px;
+    font-family: Times New Roman;
+}
+.tip ul {
+    margin:0;
+    padding:0;
+}
+.tip li {
+    margin:0;
+    padding:0;
+}
+.error-highlight {
+    background-color: rgb(255, 255, 157);
+    border-bottom:1px solid orange;
+}
+#dictionaryForm{
+	margin:10px 0 0 0;
+}
+
+#dictionaryForm .formRow {
+	height:46px;
+}
+
+#dictionaryForm .formRow input[type=text]{
+	padding:5px;
+}
+
+#btnAddWord, #btnSearchWord, #btnTestRule, #btnRuleCompetence, #btnFalsePositives, #btnProcessingTime{
+	width:150px;
+}
+
+#testingForm{
+	margin:10px 0 0 0;
+}
+
+#testingForm .formRow{
+	height:46px;
+}
+
+#testingForm .formRow input[type=text]{
+	padding:5px;
+}
+
+.testError {
+    padding:10px;
+    border-style:solid;
+    margin:0 0 10px 0;
+}

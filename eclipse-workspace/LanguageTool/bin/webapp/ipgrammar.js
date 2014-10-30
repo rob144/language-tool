@@ -234,8 +234,33 @@ function getLanguageCode(){
 }
 
 $( document ).ready(function() {
-    
+
     setTestText();
+    $( "#ruleTestPopOver" ).popover();
+    
+    $("select").change( function () {
+    
+        $( "#testRuleOption" ).hide();
+        $( "#ruleCompetenceOption" ).hide();
+        $( "#falsePositivesOption" ).hide();
+        $( "#processingTimeOption" ).hide();
+        
+        if ($( "#testOption option:selected" ).val() == 0) {
+            $( "#testRuleOption" ).show();
+        }
+        
+        if ($( "#testOption option:selected" ).val() == 1) {
+            $( "#ruleCompetenceOption" ).show();
+        }
+        
+        if ($( "#testOption option:selected" ).val() == 2) {
+            $( "#falsePositivesOption" ).show();
+        }
+        
+        if ($( "#testOption option:selected" ).val() == 3) {
+            $( "#processingTimeOption" ).show();
+        }
+    }).change();
 
     $( "#btnSubmitPost" ).click(function() {
         
@@ -322,5 +347,74 @@ $( document ).ready(function() {
                 console.log(errorMessage);
             }
         });
-    });   
+    });
+    
+    $( "#btnTestRule" ).click(function() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: '/test',
+            data: {test : "test_rule", rule_id : $( "#ruleId" ).val(), line_start : $( "#lineStart" ).val(), line_limit : $( "#lineEnd" ).val()},
+                
+            success: function( xml ){
+                new Transformation().setXml(xml).setXslt("test_errors.xsl").transform("testingResults");
+            },
+            error: function(xhr, textStatus, error){
+                var errorMessage = 'Error connecting to the LanguageTool server.';
+                alert(errorMessage);
+                console.log(errorMessage);
+            }
+        });
+    });
+    
+    $( "#btnRuleCompetence" ).click(function() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: '/test',
+            data: {test : "rule_competence"},
+            success: function( xml ){
+                $('#testingResults').html(xml);
+            },
+            error: function(xhr, textStatus, error){
+                var errorMessage = 'Error connecting to the LanguageTool server.';
+                alert(errorMessage);
+                console.log(errorMessage);
+            }
+        });
+    });
+    
+    $( "#btnFalsePositives" ).click(function() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: '/test',
+            data: {test : "false_positives"},
+            success: function( xml ){
+                $('#testingResults').html(xml);
+            },
+            error: function(xhr, textStatus, error){
+                var errorMessage = 'Error connecting to the LanguageTool server.';
+                alert(errorMessage);
+                console.log(errorMessage);
+            }
+        });
+    });
+    
+    $( "#btnProcessingTime" ).click(function() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: '/test',
+            data: {test : "processing_time"},
+            success: function( xml ){
+                $('#testingResults').html(xml);
+            },
+            error: function(xhr, textStatus, error){
+                var errorMessage = 'Error connecting to the LanguageTool server.';
+                alert(errorMessage);
+                console.log(errorMessage);
+            }
+        });
+    });
 });
