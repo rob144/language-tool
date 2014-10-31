@@ -16,11 +16,11 @@
             <div id='headerRow'>
                 <h1 id='headerLeft'><a id='grammar-tool-title' href='/'>Grammar Tool</a></h1>
                 <div id='headerRight'>
-                	<div class="dropdown" id='selectLang'>
-					  <button class="btn btn-default dropdown-toggle" type="button" id="dropDownLang" data-toggle="dropdown">
-					    English (GB)
-					    <span class="caret"></span>
-					  </button>
+                    <div class="dropdown" id='selectLang'>
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropDownLang" data-toggle="dropdown">
+                            English (GB)
+                            <span class="caret"></span>
+                        </button>
 					  <ul class="dropdown-menu" role="menu" aria-labelledby="dropDownLang">
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English (GB)</a></li>
 					    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English (US)</a></li>
@@ -95,47 +95,65 @@
 				            <option value="2">False Positives</option>
 				            <option value="3">Processing Time</option>
 				        </select>
-				        
-				        <button id="ruleTestPopOver" 
-				            type="button" 
-				            class="btn btn-default" 
-				            data-container="body" 
-				            data-toggle="popover" data-placement="right" 
-				            data-content="Tests a specific rule against a well-formed corpus, starting and ending at given lines in the corpus. Returns any matches the rule makes on the corpus.">
-				            <span class="glyphicon glyphicon-info-sign"></span>
-				        </button>
-				        
+
 				        <div id="testControls">
 				            <div id="testRuleOption">
     				            <div class="formRow">
-        				            <input type="text" size="50" id='ruleId' name='ruleId' placeholder='Rule ID'/>
-        				            <input type="text" size="10" id='lineStart' name='lineStart' placeholder='Test start line'/>
-        				            <input type="text" size="10" id='lineEnd' name='lineEnd' placeholder='Test end line'/>
-        				            <input type="submit" id="btnTestRule" class="btn btn-success" class="form-control" value="Test Rule"/>
+    				                <input type="submit" id="btnTestRule" class="btn btn-success" class="form-control" value="Test Rule"/>
+        				            <input type="text" size="56" id='ruleId' name='ruleId' placeholder='Rule ID'/>
+        				            <input type="text" size="5" id='lineStart' name='lineStart' placeholder='Start Line'/>
+        				            <input type="text" size="5" id='lineEnd' name='lineEnd' placeholder='End Line'/>
+        				            
+        				            <button id="ruleTestPopOver" 
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        data-container="body" 
+                                        data-toggle="popover" data-placement="bottom" 
+                                        data-content="Tests a specific rule against a well-formed corpus, starting and ending at given lines in the corpus. Returns any matches the rule makes on the corpus.">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </button>
     				            </div>
     				        </div>
     				        <div id="ruleCompetenceOption">
-    				            <div class="textWrapper">
-                                    <p>Checks that all rules' syntax and logic is well formed, returns the details of the first rule that fails, if any.</p>
-                                </div>
     				            <div class="formRow">
                                     <input type="submit" id="btnRuleCompetence" class="btn btn-success" class="form-control" value="Rule Competence"/>
+                                    
+                                    <button id="ruleCompetencePopOver" 
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        data-container="body" 
+                                        data-toggle="popover" data-placement="bottom" 
+                                        data-content="Checks that all rules' syntax and logic is well formed, returns the details of the first rule that fails, if any.">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </button>
                                 </div>
     				        </div>
     				        <div id="falsePositivesOption">
-    				            <div class="textWrapper">
-                                    <p>Checks all IP rules against a well formed corpus and returns formatted results including rule ID and match count.</p>
-                                </div>
         				        <div class="formRow">
                                     <input type="submit" id="btnFalsePositives" class="btn btn-success" class="form-control" value="False Positives"/>
+                                    
+                                    <button id="falsePositivesPopOver"
+                                        type="button"
+                                        class="btn btn-default"
+                                        data-container="body" 
+                                        data-toggle="popover" data-placement="bottom" 
+                                        data-content="Checks all IP rules against a well formed corpus and returns formatted results including rule ID and match count.">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </button>
                                 </div>
                             </div>
                             <div id="processingTimeOption"> 
-                                <div class="textWrapper">
-                                    <p>Tests all active rules against incremental corpus extract sizes to determine processing time per line.</p>
-                                </div>
                                 <div class="formRow">
                                     <input type="submit" id="btnProcessingTime" class="btn btn-success" class="form-control" value="Processing Time"/>
+                                    
+                                    <button id="processingTimePopOver" 
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        data-container="body" 
+                                        data-toggle="popover" data-placement="bottom" 
+                                        data-content="Checks processing by matching all rules against increasing numbers of lines of text.">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </button>
                                 </div>
                             </div>
                         </div>

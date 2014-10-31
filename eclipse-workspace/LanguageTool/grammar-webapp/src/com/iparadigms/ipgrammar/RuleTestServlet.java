@@ -2,7 +2,6 @@ package com.iparadigms.ipgrammar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -104,21 +103,19 @@ writeLog("TESTING EACH IP RULE");
         
         String corpusText = _engCorpus.getLinesToString(1000);
         String returnText = "";
-        int matchesCount = 0;
         
         for (int x = 0; ruleIdsIP.size() > x; x++) {
 writeLog("TESTING IP RULE " + x + " of " + ruleIdsIP.size());
             _langTool.enableRule(ruleIdsIP.get(x));
-            if (x != 0)
+            if (x != 0) {
                 _langTool.disableRule(ruleIdsIP.get(x-1));
+                returnText += ":";
+            }
             
             List<RuleMatch> matches = _langTool.check(corpusText);
-            
-            matchesCount += matches.size();
-            returnText += ruleIdsIP.get(x) + ", \t" + matches.size() + "\n";
+            returnText += ruleIdsIP.get(x) + "," + matches.size();
         }
-        returnText += "##########################\nRules checked : " 
-        		+ ruleIdsIP.size() + "\tTotal number of matches : " + matchesCount;
+        
         return returnText;
     }
     

@@ -44,6 +44,7 @@ System.out.println("EXTRACTING CORPUS TEXT");
             }
             corpusReader.close();
             printLine.close();
+            write.close();
         }
         
         loadCorpusText();

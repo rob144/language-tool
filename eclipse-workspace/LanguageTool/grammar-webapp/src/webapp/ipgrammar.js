@@ -237,9 +237,21 @@ $( document ).ready(function() {
 
     setTestText();
     $( "#ruleTestPopOver" ).popover();
+    $( "#ruleCompetencePopOver" ).popover();
+    $( "#falsePositivesPopOver" ).popover();
+    $( "#processingTimePopOver" ).popover();
+    
+    $( "#ruleCompetenceOption" ).hide();
+    $( "#falsePositivesOption" ).hide();
+    $( "#processingTimeOption" ).hide();
     
     $("select").change( function () {
-    
+        
+        $( "#ruleTestPopOver" ).popover('hide');
+        $( "#ruleCompetencePopOver" ).popover('hide');
+        $( "#falsePositivesPopOver" ).popover('hide');
+        $( "#processingTimePopOver" ).popover('hide');
+        
         $( "#testRuleOption" ).hide();
         $( "#ruleCompetenceOption" ).hide();
         $( "#falsePositivesOption" ).hide();
@@ -391,7 +403,13 @@ $( document ).ready(function() {
             url: '/test',
             data: {test : "false_positives"},
             success: function( xml ){
-                $('#testingResults').html(xml);
+                var entries = xml.split(":");
+                var html = "<tr><th>Rule ID</th><th>Matches</th></tr>";
+                for (x = 0; x < entries.length; x++) {
+                    var column = entries[x].split(",");
+                    html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
+                }
+                $('#testingResults').html(html);
             },
             error: function(xhr, textStatus, error){
                 var errorMessage = 'Error connecting to the LanguageTool server.';

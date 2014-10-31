@@ -3,30 +3,31 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="257" key="DIALOG_WIDTH"/>
 		<item value="493" key="DIALOG_Y_ORIGIN"/>
-		<item value="381" key="DIALOG_HEIGHT"/>
 		<item value="1343" key="DIALOG_X_ORIGIN"/>
+		<item value="381" key="DIALOG_HEIGHT"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="isRegEx"/>
 		<item value="false" key="casesensitive"/>
+		<item value="true" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="corpus" key="selection"/>
+		<item value="String" key="selection"/>
 		<list key="findhistory">
-			<item value="corpus"/>
-			<item value="formRow"/>
-			<item value="btnBuildDictionary"/>
-			<item value="ruleCompetenceOption"/>
-			<item value="processingTimeOption"/>
-			<item value="falsePositivesOption"/>
-			<item value="ruleLogicOption"/>
-			<item value="testRuleOption"/>
+			<item value="String"/>
+			<item value="\t"/>
+			<item value="setTagger"/>
+			<item value="set"/>
+			<item value="getTagger"/>
+			<item value="bananaphone"/>
+			<item value="zymosan"/>
+			<item value="zymogeneses"/>
 		</list>
 		<list key="replacehistory">
-			<item value="ipRulesFalsePositive"/>
 			<item value="    "/>
+			<item value="data-placement=&quot;bottom&quot;"/>
+			<item value="ipRulesFalsePositive"/>
 			<item value=""/>
 			<item value="Modal verb should not be followed by &apos;of&apos;."/>
 		</list>

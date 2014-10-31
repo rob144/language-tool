@@ -3,10 +3,12 @@ package com.iparadigms.ipgrammar;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+
 import morfologik.tools.FSADumpTool;
 
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
+import org.languagetool.language.English;
 import org.languagetool.tagging.en.EnglishTagger;
 import org.languagetool.dev.POSDictionaryBuilder;
 
@@ -54,10 +56,12 @@ public class UnitTests {
         //_lang = Language.getLanguageForShortName("en-GB").getClass().newInstance();
         _lang = new IPEnglish();
         _lang.getSentenceTokenizer().setSingleLineBreaksMarksParagraph(true);
-        _langTool = new JLanguageTool(_lang);
+        
         EnglishTagger tagger = (EnglishTagger) _langTool.getLanguage().getTagger();
         System.out.println("Tagger dictionary path: " + tagger.getFileName());
         tagger.setFileName("/whatever");
+        
+        _langTool = new JLanguageTool(_lang);
         
         if (tagger.getFileName().equals("/whatever"))
             return true;
