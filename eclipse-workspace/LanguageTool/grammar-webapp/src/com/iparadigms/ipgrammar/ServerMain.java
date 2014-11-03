@@ -3,7 +3,7 @@ package com.iparadigms.ipgrammar;
 public class ServerMain {
 	
     public static void main(String[] args) throws Exception {
-        //runUnitTests();
+        runUnitTests();
         
     	ServerManager serverManager = new ServerManager ();
     	serverManager.start();

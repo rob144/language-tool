@@ -4,12 +4,15 @@ import org.languagetool.tagging.Tagger;
 
 public class IPEnglish extends English {
     
-    private Tagger _tagger;
-
+    private Tagger tagger;
+    
     //Pass in instance of IPEnglishTagger
-    public void setTagger(Tagger theTagger){
-        _tagger = theTagger;
+    @Override
+    public Tagger getTagger() {
+      if (tagger == null) {
+        tagger = new IPEnglishTagger();
+      }
+      return tagger;
     }
     
-
 }

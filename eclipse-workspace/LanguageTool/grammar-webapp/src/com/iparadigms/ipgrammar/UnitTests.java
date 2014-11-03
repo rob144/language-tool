@@ -2,7 +2,17 @@ package com.iparadigms.ipgrammar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import morfologik.tools.FSADumpTool;
 
@@ -22,12 +32,66 @@ public class UnitTests {
     private String _pathToInfoFile = _resourcesDir + "english.info";
     
     public UnitTests() throws Exception{
-        if (dumpDictionaryToMemory()
-                && testSetDictionaryFileName()
-                && testPosDictionaryBuilder())
+        if (testPosDictionaryBuilder())
             System.out.println("Unit tests succeeded");
         else
             System.out.println("Unit tests failed");
+    }
+    
+    public boolean testIntegrity () throws Exception {
+        //DONE
+        String originalDict = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/cmd_english.dict";
+        String originalDictToDumpToDict = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/cmd_built_english.dict";
+        
+        if (compareFiles(originalDict, originalDictToDumpToDict))
+            return true;
+        else
+            return false;
+    }
+    
+    public boolean testDictionaryDump() throws Exception {
+        //DONE
+        
+        String cmd_dict = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/cmd_english.dict";
+        String cmd_dump = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/cmd_dictionary.dump";
+        String dump = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/dictionary.dump";
+        
+        PrintStream old = System.out;
+        
+        ByteArrayOutputStream corpusDumpText = new ByteArrayOutputStream();
+        PrintStream writeCorpusDump = new PrintStream(corpusDumpText);
+        System.setOut(writeCorpusDump);
+        
+        FSADumpTool.main("--raw-data", "-x", "-d", cmd_dict);
+        System.out.flush();
+        System.setOut(old);
+        writeCorpusDump.close();
+        
+        FileWriter write = new FileWriter(dump, false);
+        PrintWriter printLine = new PrintWriter(write);
+        
+        printLine.print(corpusDumpText.toString());
+        
+        printLine.close();
+        write.close();
+        
+        return compareFiles(cmd_dump, dump);
+    }
+    
+    public boolean testPosDictionaryBuilder() throws Exception {
+        //DONE
+        String cmd_dump = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/cmd_dictionary.dump";
+        String cmd_built_english = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/cmd_built_english.dict";
+        String dict = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/english.dict";
+        String cmd_info = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/test/cmd_english.info";
+        
+        File dumpFile = new File (cmd_dump);
+        dumpFile.renameTo(dumpFile);
+        File dictFile = new File (dict);
+        POSDictionaryBuilder pos = new POSDictionaryBuilder(new File(cmd_info));
+        pos.build(dumpFile).renameTo(dictFile);
+        
+        return compareFiles(dict, cmd_built_english);
     }
     
     public boolean dumpDictionaryToMemory() throws Exception {
@@ -69,11 +133,34 @@ public class UnitTests {
             return false;
     }
     
-    public boolean testPosDictionaryBuilder() throws Exception {
-        POSDictionaryBuilder pos = new POSDictionaryBuilder(new File(_pathToInfoFile));
-        pos.build(new File(_pathToTextDict)).renameTo(new File(_pathToBinaryDict));
+    public boolean testDictionaryAddingWords() throws Exception {
+        //load cmd line dump into memory
+        //add words in memory
+        //dump it
+        //somehow check it works?
+        return false;
+    }
+    
+    private boolean compareFiles(String filePathOne, String filePathTwo) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        try (InputStream is = Files.newInputStream(Paths.get(filePathOne))) {
+          DigestInputStream dis = new DigestInputStream(is, md);
+          /* Read stream to EOF as normal... */
+          while(dis.read()!= -1);
+          dis.close();
+        }
+        byte[] digest = md.digest();
         
-        if (new File(_pathToBinaryDict).exists())
+        MessageDigest md2 = MessageDigest.getInstance("MD5");
+        try (InputStream is = Files.newInputStream(Paths.get(filePathTwo))) {
+          DigestInputStream dis = new DigestInputStream(is, md2);
+          /* Read stream to EOF as normal... */
+          while(dis.read()!= -1);
+          dis.close();
+        }
+        byte[] digest2 = md2.digest();
+        
+        if (Arrays.equals(digest, digest2))
             return true;
         else
             return false;

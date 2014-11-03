@@ -2,9 +2,14 @@ package com.iparadigms.ipgrammar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.AssertionError;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+
+import morfologik.tools.FSADumpTool;
 
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
@@ -77,7 +82,6 @@ public class RuleTestServlet extends HttpServlet{
             _langTool.enableRule(ruleId);
         
         List<RuleMatch> matches = _langTool.check(_engCorpus.getLinesToString(lineStart, lineLimit));
-writeLog("Number of matches: " + matches.size());
         
         //TODO : Either this side or client side figure a way to matches data in a more accessible fashion
         RuleAsXmlSerializer serializer = new RuleAsXmlSerializer();
@@ -85,16 +89,19 @@ writeLog("Number of matches: " + matches.size());
         return xmlResponse;
     }
     
-    private String testRuleCompetence () {
+    private String testRuleCompetence () throws IOException {
         EnglishPatternRuleTest enRuleTest  = new EnglishPatternRuleTest ();
         PatternRuleTest ruleTest = new PatternRuleTest ();
         
         try {
             enRuleTest.testRulesForLanguage(_lang);
             ruleTest.testGrammarRulesFromXML(_myRules, _langTool, _langTool, _lang);
-        } catch (IOException e) { e.printStackTrace();}
-        
-        return "";
+        } catch (AssertionError a) {
+            String s = a.toString();
+            String p = s.substring(s.indexOf("IP_"), s.indexOf(":", s.indexOf("IP_")));
+            return "First error found with rule : " + p;
+        }
+        return "Rules OK";
     }
     
     private String ipRulesFalsePositive () throws IOException {
@@ -105,7 +112,7 @@ writeLog("TESTING EACH IP RULE");
         String returnText = "";
         
         for (int x = 0; ruleIdsIP.size() > x; x++) {
-writeLog("TESTING IP RULE " + x + " of " + ruleIdsIP.size());
+writeLog("TESTING IP RULE " + (x+1) + " of " + ruleIdsIP.size());
             _langTool.enableRule(ruleIdsIP.get(x));
             if (x != 0) {
                 _langTool.disableRule(ruleIdsIP.get(x-1));
@@ -120,26 +127,25 @@ writeLog("TESTING IP RULE " + x + " of " + ruleIdsIP.size());
     }
     
     private String testRulesProcessTime () throws IOException {
-        String formattedString = "<p>";
+        String result = "";
         String corpusText = _engCorpus.getLinesToString(1000);
         List<RuleMatch> matches = _langTool.check(corpusText);
         
         for (int x = 1; x <= 10; x++) {
+writeLog("LOOP NUMBER : " + x);
             corpusText = _engCorpus.getLinesToString(x*1000);
             
-            writeLog("LOOP NUMBER : " + x);
             if (x != 1)
-                formattedString += "<br/>";
+                result += ":";
             
             long startTime = System.nanoTime();
             matches = _langTool.check(corpusText);
             double timeElapsed = (double)((System.nanoTime() - startTime)/1000000000.0);
             
-            formattedString += x*1000 + ",\t" + _langTool.getAllActiveRules().size()
-                    + ",\t" + matches.size() + ",\t" + timeElapsed;
+            result += (x*1000) + "," + _langTool.getAllActiveRules().size()
+                    + "," + matches.size() + "," + timeElapsed;
         }
-        formattedString += "</p>";
-        return formattedString;
+        return result;
     }
     
     public void disableAllActiveRules () {
@@ -155,19 +161,17 @@ writeLog("TESTING IP RULE " + x + " of " + ruleIdsIP.size());
     @Override
     public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
         
-        writeLog("RUNNING TEST : " + req.getParameter("test"));
-        
-        //Need to start returning things to populate results div then writing them
-        String output = "";
+writeLog("RUNNING TEST : " + req.getParameter("test"));
+
+        String output = null;
         
         if (req.getParameter("test").equals("test_rule"))
             output = testIPRules(req.getParameter("rule_id"),
                 Integer.parseInt(req.getParameter("line_start")),
                 Integer.parseInt(req.getParameter("line_limit")));
         
-        if (req.getParameter("test").equals("rule_competence")) {
+        if (req.getParameter("test").equals("rule_competence"))
             output = testRuleCompetence();
-        }
         
         if (req.getParameter("test").equals("false_positives"))
             output = ipRulesFalsePositive();

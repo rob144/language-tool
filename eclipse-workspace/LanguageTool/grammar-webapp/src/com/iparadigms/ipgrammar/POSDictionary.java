@@ -118,7 +118,7 @@ writeLog("DICTIONARY DUMP MISSING : DUMPING DICTIONARY");
                 FileWriter write = new FileWriter(_pathToDump, false);
                 PrintWriter printLine = new PrintWriter(write);
                 
-                printLine.println(corpusDumpText.toString());
+                printLine.print(corpusDumpText.toString());
                 
                 printLine.close();
                 write.close();

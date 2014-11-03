@@ -717,11 +717,11 @@
             <rule>
                 <pattern>
                     <token postag_regexp="yes" postag="VB|VBD|VBG|VBN|VBZ"/>
-                    <marker>
+                    <!-- <marker> -->
                         <token>they</token>
                         <token>'</token>
                         <token>re</token>
-                    </marker>
+                    <!-- </marker> -->
                     <token postag_regexp="yes" postag="NNS|NN:U|NN:UN|NNP|NNPS"/>
                 </pattern>
                 <message>Did you mean to use "<match no="2"/><match no="3"/><match no="4"/>"? Consider rephrasing.</message>

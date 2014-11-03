@@ -17,7 +17,12 @@ h1 { margin:0; border:0; }
     float:left; 
     font-size:12pt;
 }
-#loadingDiv { display: none; width:200px; float:left; }
+#loadingDiv {
+    display: none;
+    float: right;
+    margin: 0 10px 0 10px;
+}
+
 #loadingMessage div { float:left; margin:0 0 0 10px; }
 #loadingImage img { width:18px; float:left; margin:0 0 0 10px; }
 h1 { font-size: 14pt; }
@@ -161,6 +166,7 @@ max-width:300px;
 #testingResults {
     border-style: solid;
     border-width: 1px;
+    padding: 5px;
     margin: 10px 0 0 0;
 }
 

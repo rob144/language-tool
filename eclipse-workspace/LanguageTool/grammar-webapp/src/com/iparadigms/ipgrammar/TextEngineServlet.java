@@ -56,7 +56,7 @@ LOG.log(Level.INFO, "***Post Servlet****");
         String results = "";
         String text = req.getParameter("text");
         
-//LOG.log(Level.INFO, "POSTED TEXT: {0}", text );
+LOG.log(Level.INFO, "POSTED TEXT: {0}", text );
         
         resp.setContentType("text/html");
 

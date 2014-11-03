@@ -118,7 +118,6 @@ var DATA = {
         },
     getPageText:
         function (pageNumber){
-            
             CURRENT_PAGE = pageNumber;
             var pageText = "";
             var position = (pageNumber - 1) * MAX_PAGE_LINES;
@@ -221,6 +220,8 @@ function addHighlighting( arrXmlErrors ){
             }
         }
     }
+    
+    $("#loadingDiv").fadeOut(500);
 }
 
 function getLanguageCode(){
@@ -234,7 +235,134 @@ function getLanguageCode(){
 }
 
 $( document ).ready(function() {
+    
+    initialiseDocument();
+    
+    $( "select" ).change(function(){
+        
+        hideAllOptions();
+        
+        if ($( "#testOption option:selected" ).val() == 0)
+            $( "#testRuleOption" ).show();
+        
+        if ($( "#testOption option:selected" ).val() == 1)
+            $( "#ruleCompetenceOption" ).show();
+        
+        if ($( "#testOption option:selected" ).val() == 2)
+            $( "#falsePositivesOption" ).show();
+        
+        if ($( "#testOption option:selected" ).val() == 3)
+            $( "#processingTimeOption" ).show();
+    }).change();
+    
+    $( "#btnSubmitPost" ).click(function(){
+        DATA.plainText = $( "#inputText" ).val();
+        $("#loadingDiv").show();
+        doAjaxRequest('POST', '/' + getLanguageCode() + '/checktext', 'text=' + encodeURIComponent( DATA.plainText ),
+            function(xml){
+                /* remove the <? xml version ... ?> tag */
+                xml = xml.substr(xml.indexOf('?>')+2);  
+                var $xmlObj = $( $.parseXML('<root>'+ xml +'</root>') );
+                var xmlString = $xmlObj.find('root').html().trim();
+                
+                DATA.processErrorXml( $xmlObj.find('error') );
+                new Transformation().setXml(xmlString).setXslt("grammar_errors.xsl").transform("xslOutput");
+                showTab( 'markupTab', DATA.getPageText(1) );
+            }
+        );
+    });
+    
+    $( "#btnAddWord" ).click(function(){
+        var word = $( "#inputTextDictAdd" ).val();
+        if($.trim(word).length <= 0) return;
+        doAjaxRequest('GET', '/dictionary', {add : word},
+            function(response){
+                $('#functionResult').text(response);
+            }
+        )
+    });
+    
+    $( "#btnSearchWord" ).click(function(){
+        var word = $( "#inputTextDictSearch" ).val()
+        if($.trim(word).length <= 0) return;
+        doAjaxRequest('GET', '/dictionary', {search : word},
+            function(response){
+                $('#functionResult').text(response);
+            }
+        )
+    });
+    
+    $( "#btnBuildDictionary" ).click(function(){
+        doAjaxRequest('GET', '/dictionary', {build : ""},
+            function(response){
+                $('#functionResult').text(response);
+            }
+        )
+    });
+    
+    $( "#btnTestRule" ).click(function(){
+        doAjaxRequest('GET', '/test',
+        {test : "test_rule", rule_id : $( "#ruleId" ).val(), line_start : $( "#lineStart" ).val(), line_limit : $( "#lineEnd" ).val()},
+            function(response){
+                new Transformation().setXml(response).setXslt("test_errors.xsl").transform("testingResults");
+            }
+        )
+    });
+    
+    $( "#btnRuleCompetence" ).click(function(){
+        doAjaxRequest('GET', '/test', {test : "rule_competence"},
+            function(response){
+                $('#testingResults').html(response);
+            }
+        )
+    });
+    
+    $( "#btnFalsePositives" ).click(function(){
+        doAjaxRequest('GET', '/test', {test : "false_positives"},
+            function(response){
+                var entries = response.split(":");
+                var html = "<tr><th>Rule ID</th><th>Matches</th></tr>";
+                for (x = 0; x < entries.length; x++) {
+                    var column = entries[x].split(",");
+                    html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
+                }
+                $('#testingResults').html(html);
+            }
+        )
+    });
+    
+    $( "#btnProcessingTime" ).click(function(){
+        doAjaxRequest('GET', '/test', {test : "processing_time"},
+            function(response){
+                var entries = response.split(":");
+                var html = "<tr><th>Lines Used</th><th>Rules Used</th><th>Matches</th><th>Time Taken</th></tr>";
+                for (x = 0; x < entries.length; x++) {
+                    var column = entries[x].split(",");
+                    html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td><td>" + column[2] + "</td><td>" + column[3] + "</td></tr>";
+                }
+                $('#testingResults').html(html);
+            }
+        )
+    });
+    
+});
 
+function doAjaxRequest(type, url, data, successFunction){
+    $.ajax({
+        type: type,
+        dataType: 'text',
+        url: url,
+        data: data,
+        success: successFunction,
+        error: function(xhr, textStatus, error){
+            var errorMessage = 'Error connecting to the LanguageTool server.';
+            alert(errorMessage);
+            console.log(errorMessage);
+        }
+    });
+}
+
+function initialiseDocument(){
     setTestText();
     $( "#ruleTestPopOver" ).popover();
     $( "#ruleCompetencePopOver" ).popover();
@@ -244,195 +372,16 @@ $( document ).ready(function() {
     $( "#ruleCompetenceOption" ).hide();
     $( "#falsePositivesOption" ).hide();
     $( "#processingTimeOption" ).hide();
-    
-    $("select").change( function () {
-        
-        $( "#ruleTestPopOver" ).popover('hide');
-        $( "#ruleCompetencePopOver" ).popover('hide');
-        $( "#falsePositivesPopOver" ).popover('hide');
-        $( "#processingTimePopOver" ).popover('hide');
-        
-        $( "#testRuleOption" ).hide();
-        $( "#ruleCompetenceOption" ).hide();
-        $( "#falsePositivesOption" ).hide();
-        $( "#processingTimeOption" ).hide();
-        
-        if ($( "#testOption option:selected" ).val() == 0) {
-            $( "#testRuleOption" ).show();
-        }
-        
-        if ($( "#testOption option:selected" ).val() == 1) {
-            $( "#ruleCompetenceOption" ).show();
-        }
-        
-        if ($( "#testOption option:selected" ).val() == 2) {
-            $( "#falsePositivesOption" ).show();
-        }
-        
-        if ($( "#testOption option:selected" ).val() == 3) {
-            $( "#processingTimeOption" ).show();
-        }
-    }).change();
+}
 
-    $( "#btnSubmitPost" ).click(function() {
-        
-        $("#loadingDiv").show();
-
-        DATA.plainText = $( "#inputText" ).val();
-        
-        $.ajax({
-            type: 'POST',
-            dataType: 'text',
-            url: '/' + getLanguageCode() + '/checktext',
-            data: 'text=' + encodeURIComponent( DATA.plainText ),
-            success: function( xml ){
-                
-                /* remove the <? xml version ... ?> tag */
-                xml = xml.substr(xml.indexOf('?>')+2);  
-                var $xmlObj = $( $.parseXML('<root>'+ xml +'</root>') );
-                var xmlString = $xmlObj.find('root').html().trim();
-
-                DATA.processErrorXml( $xmlObj.find('error') );
-                new Transformation().setXml(xmlString).setXslt("grammar_errors.xsl").transform("xslOutput");
-                showTab( 'markupTab', DATA.getPageText(1) );
-                $("#loadingDiv").hide();
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });   
-
-    $( "#btnAddWord" ).click(function() {
-        var word = $( "#inputTextDictAdd" ).val();
-    	if($.trim(word).length <= 0) return;
-    	$.ajax({
-            type: 'GET',
-            dataType: 'text',
-            url: '/dictionary',
-            data: { add : word },
-            success: function( xml ){
-                $('#functionResult').text(xml);
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });
+function hideAllOptions(){
+    $( "#ruleTestPopOver" ).popover('hide');
+    $( "#ruleCompetencePopOver" ).popover('hide');
+    $( "#falsePositivesPopOver" ).popover('hide');
+    $( "#processingTimePopOver" ).popover('hide');
     
-    $( "#btnSearchWord" ).click(function() {
-    	var word = $( "#inputTextDictSearch" ).val();
-    	if($.trim(word).length <= 0) return;
-        $.ajax({
-            type: 'GET',
-            dataType: 'text',
-            url: '/dictionary',
-            data: {search : $( "#inputTextDictSearch" ).val()},
-            success: function( xml ){
-                $('#functionResult').text(xml);
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });
-    
-    $( "#btnBuildDictionary" ).click(function() {
-    
-        $.ajax({
-            type: 'GET',
-            dataType: 'text',
-            url: '/dictionary',
-            data: {build : ""},
-            success: function( xml ){
-                $('#functionResult').text(xml);
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });
-    
-    $( "#btnTestRule" ).click(function() {
-        $.ajax({
-            type: 'GET',
-            dataType: 'text',
-            url: '/test',
-            data: {test : "test_rule", rule_id : $( "#ruleId" ).val(), line_start : $( "#lineStart" ).val(), line_limit : $( "#lineEnd" ).val()},
-                
-            success: function( xml ){
-                new Transformation().setXml(xml).setXslt("test_errors.xsl").transform("testingResults");
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });
-    
-    $( "#btnRuleCompetence" ).click(function() {
-        $.ajax({
-            type: 'GET',
-            dataType: 'text',
-            url: '/test',
-            data: {test : "rule_competence"},
-            success: function( xml ){
-                $('#testingResults').html(xml);
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });
-    
-    $( "#btnFalsePositives" ).click(function() {
-        $.ajax({
-            type: 'GET',
-            dataType: 'text',
-            url: '/test',
-            data: {test : "false_positives"},
-            success: function( xml ){
-                var entries = xml.split(":");
-                var html = "<tr><th>Rule ID</th><th>Matches</th></tr>";
-                for (x = 0; x < entries.length; x++) {
-                    var column = entries[x].split(",");
-                    html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
-                }
-                $('#testingResults').html(html);
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });
-    
-    $( "#btnProcessingTime" ).click(function() {
-        $.ajax({
-            type: 'GET',
-            dataType: 'text',
-            url: '/test',
-            data: {test : "processing_time"},
-            success: function( xml ){
-                $('#testingResults').html(xml);
-            },
-            error: function(xhr, textStatus, error){
-                var errorMessage = 'Error connecting to the LanguageTool server.';
-                alert(errorMessage);
-                console.log(errorMessage);
-            }
-        });
-    });
-});
+    $( "#testRuleOption" ).hide();
+    $( "#ruleCompetenceOption" ).hide();
+    $( "#falsePositivesOption" ).hide();
+    $( "#processingTimeOption" ).hide();
+}
