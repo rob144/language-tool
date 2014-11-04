@@ -1,7 +1,0 @@
-package com.iparadigms.ipgrammar;
-
-import org.languagetool.tagging.en.EnglishTagger;
-
-public class IPEnglishTagger extends EnglishTagger {
-
-}
