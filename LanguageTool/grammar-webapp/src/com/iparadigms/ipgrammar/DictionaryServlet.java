@@ -24,37 +24,35 @@ public class DictionaryServlet extends HttpServlet {
         _dict = new POSDictionary();
     }
     
-    @Override
-    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public String getResponse (HttpServletRequest req) {
+        String output = "Invalid request";
         
-        String output = "Invalid get request";
-        
-        if (req.getParameter("add") != null)
-            if (!_dict.searchWord(req.getParameter("add").split(" ")[0])) {
-                _dict.addWord(req.getParameter("add"));
+        if (req.getParameter("request").equals("add"))
+            if (!(_dict.searchWord(req.getParameter("line")))) {
+                _dict.addWord(req.getParameter("line"));
                 output = "Word added";
             } else
                 output = "Item exists, word not added";
         
-        if (req.getParameter("search") != null) {
-            if (_dict.searchWord(req.getParameter("search").split(" ")[0]))
+        if (req.getParameter("request").equals("search"))
+            if (_dict.searchWord(req.getParameter("line")))
                 output = "Item exists";
             else
                 output = "Item does not exist";
-        }
         
-        if (req.getParameter("build") != null) {
-            // TODO check if the added items actually end up in dump prior to it being deleted
+        if (req.getParameter("request").equals("build")) {
             try {
                 _dict.buildPosDictionary();
-                output = "Dictionary built\nWord count: " + _dict.getWordCount();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+                output = "Dictionary built\tWord count: " + _dict.getWordCount();
+            } catch (Exception e) { e.printStackTrace(); }
         }
         
-        resp.getWriter().print(output);
+        return output;
+    }
+    
+    @Override
+    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.getWriter().print(getResponse(req));
     }
     
     private void writeLog(String text){

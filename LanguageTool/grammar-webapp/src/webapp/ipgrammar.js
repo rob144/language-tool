@@ -273,9 +273,12 @@ $( document ).ready(function() {
     });
     
     $( "#btnAddWord" ).click(function(){
-        var word = $( "#inputTextDictAdd" ).val();
-        if($.trim(word).length <= 0) return;
-        doAjaxRequest('GET', '/dictionary', {add : word},
+        var word = $( "#inputTextDictAddWord" ).val()
+        var lemma = $( "#inputTextDictAddLemma" ).val()
+        var postag = $( "#inputTextDictAddPosTag" ).val()
+        if($.trim(word).length <= 0 || $.trim(lemma).length <= 0 || $.trim(postag).length <= 0) return;
+        var content = word + "." + lemma + "." + postag; 
+        doAjaxRequest('GET', '/dictionary', {request : "add", line : content},
             function(response){
                 $('#functionResult').text(response);
             }
@@ -283,9 +286,12 @@ $( document ).ready(function() {
     });
     
     $( "#btnSearchWord" ).click(function(){
-        var word = $( "#inputTextDictSearch" ).val()
-        if($.trim(word).length <= 0) return;
-        doAjaxRequest('GET', '/dictionary', {search : word},
+        var word = $( "#inputTextDictSearchWord" ).val()
+        var lemma = $( "#inputTextDictSearchLemma" ).val()
+        var postag = $( "#inputTextDictSearchPosTag" ).val()
+        if($.trim(word).length <= 0 || $.trim(lemma).length <= 0 || $.trim(postag).length <= 0) return;
+        var content = word + "." + lemma + "." + postag;
+        doAjaxRequest('GET', '/dictionary', {request : "search", line : content},
             function(response){
                 $('#functionResult').text(response);
             }
@@ -293,7 +299,7 @@ $( document ).ready(function() {
     });
     
     $( "#btnBuildDictionary" ).click(function(){
-        doAjaxRequest('GET', '/dictionary', {build : ""},
+        doAjaxRequest('GET', '/dictionary', {request : "build"},
             function(response){
                 $('#functionResult').text(response);
             }
