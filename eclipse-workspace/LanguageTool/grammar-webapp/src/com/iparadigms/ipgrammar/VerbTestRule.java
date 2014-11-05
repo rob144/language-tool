@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.iparadigms.ipgrammar.VerbTool;
+import com.iparadigms.ipgrammar.PatternElement;
 
 import org.languagetool.rules.patterns.Element;
 import org.languagetool.rules.en.EnglishRule;
@@ -44,35 +45,33 @@ public class VerbTestRule extends EnglishRule {
     	//You and I ran. 				PRP and PRP VB*
     	//The cat and the dog jumped. 	DT NN and DT NN VB*
     	//Footballers earn a lot.  		NNS VB*
-    	boolean f = false;
-    	boolean t = true;
     	
         patterns = new ArrayList<Element[]>();
+
+    	patterns.add(new Element[]{ 
+    		new PatternElement.Builder("PRP").build(),
+    		new PatternElement.Builder("VB*").regexp(1).build()
+    	});
+    	
+    	patterns.add(new Element[]{
+			new PatternElement.Builder("PRP").build(),
+			new PatternElement.Builder("and").build(),
+			new PatternElement.Builder("PRP").build(),
+			new PatternElement.Builder("VB*").regexp(1).build()
+    	});
     	
     	patterns.add(new Element[]{ 
-    		new Element("PRP", f, f, f),
-    		new Element("VB*", f, t, f)
+			new PatternElement.Builder("DT").build(),
+			new PatternElement.Builder("NN").build(),
+			new PatternElement.Builder("and").build(),
+			new PatternElement.Builder("DT").build(),
+			new PatternElement.Builder("NN").build(),
+			new PatternElement.Builder("VB*").regexp(1).build()
     	});
     	
     	patterns.add(new Element[]{  
-			new Element("PRP", f, f, f),
-			new Element("and", f, f, f),
-			new Element("PRP", f, f, f),
-			new Element("VB*", f, t, f)
-    	});
-    	
-    	patterns.add(new Element[]{ 
-			new Element("DT", f, f, f),
-			new Element("NN", f, f, f),
-			new Element("and", f, f, f),
-			new Element("DT", f, f, f),
-			new Element("NN", f, f, f),
-			new Element("VB*", f, t, f)
-    	});
-    	
-    	patterns.add(new Element[]{  
-			new Element("NNS", f, f, f),
-			new Element("VB*", f, t, f)
+    		new PatternElement.Builder("NNS").build(),
+    		new PatternElement.Builder("VB*").regexp(1).build(),
     	});
     	
     }
@@ -96,8 +95,12 @@ public class VerbTestRule extends EnglishRule {
     	//TODO: FOR EACH PATTERN: how many tokens in the pattern = numTokens
     	for(Element[] pattern : patterns){
     		//Loop through sentence tokens looking for the first matching token in the pattern
-    		for (int i = 2; i < tokens.length; i++) {
+    		int elemIndex = 0;
+    		for (int i = 0; i < tokens.length; i++) {
     			//If find first pattern token, check if next token matches until end of pattern tokens.
+    			//if(pattern[elemIndex].isMatched()){
+    				
+    			//}
     			//If all tokens match, return index of first matching token in the setence.
     	    	//Pass the matching tokens into the verb agreement tool stating the 'person' i.e. singular or plural?
     	    	//Let the verb agreement tool check if the subject verb pattern is valid, return true/false.
