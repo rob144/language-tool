@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy 0 elements to &apos;LanguageTool/grammar-webapp/src/com.iparadigms.ipgrammar.resources.test&apos;&#x0D;&#x0A;- Destination element: &apos;LanguageTool/grammar-webapp/src/com.iparadigms.ipgrammar.resources.test&apos;" description="Copy compilation units" destination="=LanguageTool/grammar-webapp\/src&lt;com.iparadigms.ipgrammar.resources.test" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1415032210125" units="0" version="1.0"/>
-</session>
