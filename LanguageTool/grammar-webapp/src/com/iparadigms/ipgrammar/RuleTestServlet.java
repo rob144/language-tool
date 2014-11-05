@@ -179,6 +179,7 @@ writeLog("RUNNING TEST : " + req.getParameter("test"));
         if (req.getParameter("test").equals("processing_time"))
             output = testRulesProcessTime();
         
+writeLog("RETURNING TEST OUTPUT");
         resp.getWriter().print(output);
     }
     

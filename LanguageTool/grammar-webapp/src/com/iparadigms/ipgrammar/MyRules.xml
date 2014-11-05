@@ -117,7 +117,7 @@
         <rule id="IP_INTERROGATIVE_WH_SENT_END_QUESTION_MARK" name="Interrogative sentances starting with WH-adverb must end with a question mark">
             <pattern case_sensitive="yes">
                 <token postag="SENT_START"/>
-                <token regexp="yes" skip="-1">Who|Where|What|When|Why|How</token>
+                <token regexp="yes" skip="-1">Who|Where|Why</token>
                 <marker>
                     <token postag="SENT_END" negate="yes">?</token><!-- detect if sentence does not end with a question mark -->
                 </marker>
@@ -174,9 +174,15 @@
             <example type="incorrect"><marker>Him</marker> gave his best.</example>
         </rule>
         <rule id="IP_PLURAL_DONT_USE_APOSTROPHE" name="Don't use an apostrophe to make a plural noun.">
+        	<antipattern>
+        		<token postag="PRP$"/>
+        		<token postag="NN"/>
+        		<token>'</token>
+        		<token>s</token>
+        	</antipattern>
             <pattern>
-                <token regexp="yes" negate="yes">at|some|the</token>
-                <token postag="NN"/>
+            	<token regexp="yes" negate="yes">a|at|some|the|this</token>
+                <token postag_regexp="yes" postag="NN"><exception postag="NNP"/><exception regexp="yes">one|other</exception></token>
                 <marker>
                     <token>'</token>
                 </marker>
@@ -203,13 +209,21 @@
                 <example type="incorrect">The computer is yours<marker>'</marker> to use as you wish.</example>
             </rule>
             <rule>
+            	<antipattern>
+            		<token>it</token>
+                    <token>'</token>
+                    <token>s</token>
+                    <token><match no="3"/></token>
+                    <token>and</token>
+                    <token><match no="5"/></token>
+            	</antipattern>
                 <pattern case_sensitive="no">
-                    <token >it</token>
+                    <token>it</token>
                     <marker>
-                        <token >'</token>
+                        <token>'</token>
                     </marker>
-                    <token >s</token>
-                    <token postag_regexp="yes" postag="NN|NNS"/>
+                    <token>s</token>
+                    <token postag_regexp="yes" postag="NN|NNS"><exception postag="JJ"/></token>
                 </pattern>
                 <message>The appropriate possessive for "it" is "its". The word "it's" is short for "it is".</message>
                 <short>No apostrophes in possessive pronouns</short>
@@ -241,19 +255,6 @@
             </rule>
         </rulegroup> 
         <rulegroup id="IP_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
-            <rule>
-                <pattern>
-                    <token postag_regexp="yes" postag="VB|VBD|VBZ|VBP"/>
-                    <marker>
-                        <token postag="TO"/>
-                    </marker>
-                    <token chunk="B-NP-plural"><exception postag_regexp="yes" postag="CD|DT|PRP\$"/><exception/></token>
-                </pattern>
-                <message>Use 'two' instead of 'to' if you mean the number two.</message>
-                <short>Use 'two' instead of 'to' if you mean the number two.</short>
-                <example type="correct">There were two main theories outlined in the abstract.</example>
-                <example type="incorrect">There were <marker>to</marker> main theories outlined in the abstract.</example>
-            </rule>
             <rule>
                 <pattern>
                     <token regexp="yes">of|by|before|at|until</token>
@@ -327,7 +328,7 @@
                 <example type="incorrect">It won't <marker>were</marker> a bright day.</example>
             </rule>
         </rulegroup>
-        <rulegroup id= "IP_SINGULAR_NOUN_PHRASE_INITIATION" name="Singular noun phrase initiation">
+        <rulegroup id="IP_SINGULAR_NOUN_PHRASE_INITIATION" name="Singular noun phrase initiation">
             <rule>
                 <antipattern>
                     <token postag="NN"/>
@@ -367,7 +368,7 @@
                 <example type="incorrect">Obvious <marker>troll</marker> is obvious.</example>
             </rule>
         </rulegroup>
-        <rulegroup id="SHOULD_HAVE_POSSESSIVE_PREPOSITION" name="Should have possessive preposition">
+        <rulegroup id="IP_SHOULD_HAVE_POSSESSIVE_PREPOSITION" name="Should have possessive preposition">
             <rule>
                 <pattern>
                     <marker>
@@ -387,28 +388,9 @@
             <rule>
                 <pattern>
                     <marker>
-                        <token>you</token>
+                        <token>there<exception scope="previous" lemma="be"/></token>
                     </marker>
-                    <or>
-                        <token chunk="B-NP-singular"/>
-                        <token chunk="B-NP-plural"/>
-                        <!-- <token postag_regexp="yes" postag="NN|NNS|NN:U|NN:UN"><exception chunk="B-VP"/></token> -->
-                    </or>
-                </pattern>
-                <message>The word "you" is used where it looks like "your" would be more appropriate</message>
-                <short>Use "your" instead of "you"</short>
-                <example type="correct">I like your hat.</example>
-                <example type="incorrect">I like <marker>you</marker> hat.</example> 
-            </rule>
-            <rule>
-                <pattern>
-                    <marker>
-                        <token>there</token>
-                    </marker>
-                    <or>
-                        <token chunk="B-NP-singular"/>
-                        <token postag="NN"/>
-                    </or>
+                    <token postag="NN"><exception postag="CD"/></token>
                 </pattern>
                 <message> The word "there" is used where it looks like "their" would be more appropriate</message>
                 <short>There instead of their</short>
