@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+		</script>
+    	<script>
+			//Server: http://sockets.mbed.org/jonchurchill/
+    		var socket = new WebSocket("ws://sockets.mbed.org/ws/jonchurchill/rw");
+ 			var sensors = new Array();
+			
+			socket.onopen = function(){
+				console.log("connected"); 
+			}; 
+			
+			socket.onmessage = function (message){
+				console.log("Message received: " + message.data)
+				var res = message.data.split(".", 3);
+				var messageType = res[0];
+				var index = parseInt(res[1], 10);
+				var data = res[2];
+				
+				if (messageType === "b"){
+					sensors[index] = data;
+				}
+				
+				var sensor = "";
+				for (var i = 0; i < sensors.length; i++){
+					sensor += "<p>##############</p><p>Sensor: " + i + "</p><p>Data: " + sensors[i] + '</p><p>'
+					+ '<form onsubmit="consoleField(' + i.toString() + '); return false;">Console command: <input type="text" id="console' + i.toString() + '" placeholder="Sensor ' + i.toString() + ' command"><input type="submit" value="Submit"></form>'
+					+ '<input type="button" value="Toggle Link LED" onclick="toggleLed(' + i + ',' + 1 + ');" />'
+					+ '<input type="button" value="Toggle Connect LED" onclick="toggleLed(' + i + ',' + 2 + ');" />'
+					+ "</p>";
+					$("#sensordiv").html(sensor);
+				}
+			};
+			
+			socket.onclose = function(){
+				console.log("disconnected"); 
+			};
+			
+			toggleLed = function(sensor,led){
+				var message = "c." + sensor.toString(16) + "." + led.toString(16);
+				socket.send(message);
+			};
+			
+			consoleField = function(index){
+				var consoleText = "c." + index + "." + document.getElementById("console" + index).value;
+				socket.send(consoleText);
+			};
+			
+			sendSensors = function(){
+				socket.send("b.0.test1");
+				socket.send("b.1.test2");
+				socket.send("b.2.test3");
+				socket.send("b.3.test4");
+			};
+			
+			broadcast = function(){
+				var broadcastText = document.getElementById("broadcastField").value;
+				socket.send(broadcastText);
+			};
+		</script>
+	</head>
+	<body>
+		<div id="testing">
+			<p>##########################</p>
+			<p>Testing</p>
+			<form onsubmit="broadcast(); return false;">
+				Broadcast on websocket: <input type="text" id="broadcastField" placeholder="Websocket broadcast">
+				<input type="submit" value="Broadcast">
+			</form>
+			<input type="button" value="Broadcast artificial sensors" onclick="sendSensors();" />
+			<form onsubmit="consoleField('99'); return false;">
+				Console command example: <input type="text" id="console99" placeholder="Sensor 99 command">
+				<input type="submit" value="Submit">
+			</form>
+			<p>##########################</p>
+		</div>
+		<div id="sensordiv"></div>
+	</body>
+</html>

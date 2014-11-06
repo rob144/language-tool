@@ -255,6 +255,24 @@ $( document ).ready(function() {
             $( "#processingTimeOption" ).show();
     }).change();
     
+    var socket = new WebSocket("ws://localhost:6819/update/");
+    
+	socket.onopen = function(){
+		console.log("connected"); 
+	};
+	
+	socket.onmessage = function (message){
+		console.log(message.data);
+	};
+	
+	socket.onclose = function(){
+		console.log("disconnected"); 
+	};
+	
+	$( "#webSocketBroadcast" ).click(function(){
+		socket.send("thisisatest");
+	});
+    
     $( "#btnSubmitPost" ).click(function(){
         DATA.plainText = $( "#inputText" ).val();
         $("#loadingDiv").show();
@@ -273,9 +291,9 @@ $( document ).ready(function() {
     });
     
     $( "#btnAddWord" ).click(function(){
-        var word = $( "#inputTextDictAddWord" ).val()
-        var lemma = $( "#inputTextDictAddLemma" ).val()
-        var postag = $( "#inputTextDictAddPosTag" ).val()
+        var word = $( "#inputTextDictAddWord" ).val();
+        var lemma = $( "#inputTextDictAddLemma" ).val();
+        var postag = $( "#inputTextDictAddPosTag" ).val();
         if($.trim(word).length <= 0 || $.trim(lemma).length <= 0 || $.trim(postag).length <= 0) return;
         var content = word + "." + lemma + "." + postag; 
         doAjaxRequest('GET', '/dictionary', {request : "add", line : content},
@@ -286,9 +304,9 @@ $( document ).ready(function() {
     });
     
     $( "#btnSearchWord" ).click(function(){
-        var word = $( "#inputTextDictSearchWord" ).val()
-        var lemma = $( "#inputTextDictSearchLemma" ).val()
-        var postag = $( "#inputTextDictSearchPosTag" ).val()
+        var word = $( "#inputTextDictSearchWord" ).val();
+        var lemma = $( "#inputTextDictSearchLemma" ).val();
+        var postag = $( "#inputTextDictSearchPosTag" ).val();
         if($.trim(word).length <= 0 || $.trim(lemma).length <= 0 || $.trim(postag).length <= 0) return;
         var content = word + "." + lemma + "." + postag;
         doAjaxRequest('GET', '/dictionary', {request : "search", line : content},
@@ -324,6 +342,7 @@ $( document ).ready(function() {
     });
     
     $( "#btnFalsePositives" ).click(function(){
+    	$("#loadingDiv").show();
         doAjaxRequest('GET', '/test', {test : "false_positives"},
             function(response){
                 var entries = response.split(":");
@@ -332,6 +351,7 @@ $( document ).ready(function() {
                     var column = entries[x].split(",");
                     html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
                 }
+                $("#loadingDiv").fadeOut(500);
                 $('#testingResults').html(html);
             }
         )

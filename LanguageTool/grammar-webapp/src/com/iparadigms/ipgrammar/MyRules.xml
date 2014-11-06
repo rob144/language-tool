@@ -99,14 +99,17 @@
             </rule> -->
         </rulegroup>
         <rule id="IP_INTERROGATIVE_SENT_END_QUESTION_MARK" name="Interrogative sentences must end with a question mark">
+        	<antipattern>
+        		<token postag="SENT_START"/>
+                <token regexp="yes" skip="-1">can|should|is|would|are</token>
+        		<token>?</token>
+        		<token postag="SENT_END">!</token>
+        	</antipattern>
             <pattern>
                 <token postag="SENT_START"/>
-                <or><!-- Sentence that starts with a verb e.g. Can, Should, Is ...etc. -->
-                    <token postag="VB|MD|VBZ|VBP" postag_regexp="yes" chunk="O" skip="-1"/>                   
-                    <token postag="VB|MD|VBZ|VBP" postag_regexp="yes" chunk="B-NP-plural" skip="-1"/>
-                </or>
+                <token regexp="yes" skip="-1">can|should|is|would|are</token>
                 <marker>
-                    <token postag="SENT_END" negate="yes">?</token><!-- detect if sentence does not end with a question mark -->
+                    <token postag="SENT_END" negate="yes">?</token>
                 </marker>
             </pattern>
             <message>Sentences starting with an inverted verb-subject patterns are interrogative constructions and should be marked at the end with a question mark.</message>
@@ -115,9 +118,15 @@
             <example type="incorrect">Is a paperless office really possible<marker>.</marker></example>
         </rule>
         <rule id="IP_INTERROGATIVE_WH_SENT_END_QUESTION_MARK" name="Interrogative sentances starting with WH-adverb must end with a question mark">
-            <pattern case_sensitive="yes">
+        	<antipattern>
+        		<token postag="SENT_START"/>
+                <token postag="WRB" regexp="yes">who|where|why</token>
+                <token postag="EX" skip="-1"/>
+        		<token postag="SENT_END" negate="yes">?</token>
+        	</antipattern>
+            <pattern>
                 <token postag="SENT_START"/>
-                <token regexp="yes" skip="-1">Who|Where|Why</token>
+                <token postag="WRB" regexp="yes" skip="-1">who|where|why</token>
                 <marker>
                     <token postag="SENT_END" negate="yes">?</token><!-- detect if sentence does not end with a question mark -->
                 </marker>
@@ -231,29 +240,17 @@
                 <example type="incorrect">The robot malfunctioned as it<marker>'</marker>s circuit board failed.</example>
             </rule>
         </rulegroup>
-        <rulegroup id="IP_PLACEMENT_OF_POSSESSIVE_ADJECTIVES" name="Correct placement of possessive adjectives">
-            <rule>
-                <pattern case_sensitive="no">
-                    <token postag="PRP$" chunk="E-NP-singular"><exception>her</exception></token>
-                </pattern>
-                <message>A possesive adjective, eg (my, her, your, their) should only occur at the beginning of a noun phrase, eg "my old car"</message>
-                <short>Possessive adjective must precede noun phrase.</short>
-                <example type="correct">This is my old car.</example>
-                <example type="incorrect">This old car is <marker>my</marker>.</example>
-            </rule> 
-            <rule>
-                <pattern case_sensitive="no">
-                    <token postag_regexp="yes" negate_pos="yes" postag="IN|VB|VBD|VBG|VBN|VBP|VBZ" />
-                    <marker>
-                        <token chunk="E-NP-singular">her</token>
-                    </marker>
-                </pattern>
-                <message>A possesive adjective, eg (my, her, your, their) should only occur at the beginning of a noun phrase, eg "my old car"</message>
-                <short>Possessive adjective must precede noun phrase.</short>
-                <example type="correct">I believe her.</example>
-                <example type="incorrect">The idea is all <marker>her</marker>.</example>
-            </rule>
-        </rulegroup> 
+        <rule id="IP_PLACEMENT_OF_POSSESSIVE_ADJECTIVES" name="Correct placement of possessive adjectives">
+        	<!-- Her marked possibly incorrectly as PRP$ instead of hers as PRP$, lots of false positives due to this -->
+            <pattern>
+                <token postag="PRP$" chunk="E-NP-singular"><exception>her</exception><exception scope="previous" postag="IN"/></token>
+            </pattern>
+            <message>A possessive adjective, eg (my, her, your, their) should only occur at the beginning of a noun phrase, eg "my old car"</message>
+            <short>Possessive adjective must precede noun phrase.</short>
+            <example type="correct">This is my old car.</example>
+            <example type="correct">You forced our action here.</example>
+            <example type="incorrect">This old car is <marker>my</marker>.</example>
+        </rule> 
         <rulegroup id="IP_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
             <rule>
                 <pattern>
@@ -326,46 +323,6 @@
                 <short>Incorrect use of future simple tense.</short>
                 <example type="correct">It won't be a bright day.</example>
                 <example type="incorrect">It won't <marker>were</marker> a bright day.</example>
-            </rule>
-        </rulegroup>
-        <rulegroup id="IP_SINGULAR_NOUN_PHRASE_INITIATION" name="Singular noun phrase initiation">
-            <rule>
-                <antipattern>
-                    <token postag="NN"/>
-                    <token postag="CD"/>
-                </antipattern>
-                <pattern>
-                    <marker>
-                        <token postag="NN" chunk="B-NP-singular">
-                            <exception>mine</exception>
-                            <exception>half</exception>
-                            <exception postag_regexp="yes" postag="CD|JJ|VB|VBP"/>
-                            <exception scope="previous" regexp="yes">,|of|or</exception>
-                            <exception scope="next" postag="SENT_END"/>
-                        </token>
-                    </marker>
-                </pattern>
-                <message>A singular common noun should have an article (a, the) or possessive (my, his, etc.) in front of it.</message>
-                <short>Improper use of common noun</short>
-                <example type="correct">My car is unreliable.</example>
-                <example type="correct">My old car is unreliable.</example>
-                <example type="incorrect"><marker>Car</marker> is unreliable.</example>
-            </rule>
-            <rule>
-                <pattern>
-                    <token postag="JJ" chunk="B-NP-singular"><exception postag_regexp="yes" postag="CD|DT"/></token>
-                    <marker>
-                        <token postag="NN"><exception>one-half</exception></token>
-                    </marker>
-                    <token><exception postag="SENT_END"/></token>
-                </pattern>
-                <message> A singular common noun phrase (eg a singular common noun preceded by adjectives), should have an article or a possessive.</message>
-                <short>Improper use of common noun phrase.</short>
-                <example type="correct">Dense fog is dangerous.</example>
-                <example type="correct">Many trolls are obvious.</example>
-                <example type="correct">Obvious trolls are obvious.</example>
-                <example type="correct">The obvious troll is obvious.</example>
-                <example type="incorrect">Obvious <marker>troll</marker> is obvious.</example>
             </rule>
         </rulegroup>
         <rulegroup id="IP_SHOULD_HAVE_POSSESSIVE_PREPOSITION" name="Should have possessive preposition">
@@ -699,11 +656,11 @@
             <rule>
                 <pattern>
                     <token postag_regexp="yes" postag="VB|VBD|VBG|VBN|VBZ"/>
-                    <!-- <marker> -->
+                    <marker>
                         <token>they</token>
                         <token>'</token>
                         <token>re</token>
-                    <!-- </marker> -->
+                    </marker>
                     <token postag_regexp="yes" postag="NNS|NN:U|NN:UN|NNP|NNPS"/>
                 </pattern>
                 <message>Did you mean to use "<match no="2"/><match no="3"/><match no="4"/>"? Consider rephrasing.</message>

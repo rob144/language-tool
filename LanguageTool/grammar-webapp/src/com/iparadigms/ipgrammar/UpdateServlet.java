@@ -1,36 +1,34 @@
 package com.iparadigms.ipgrammar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.AssertionError;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import morfologik.tools.FSADumpTool;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
 import org.languagetool.rules.Rule;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.en.EnglishPatternRuleTest;
-import org.languagetool.rules.patterns.PatternRuleLoader;
 import org.languagetool.rules.patterns.PatternRule;
+import org.languagetool.rules.patterns.PatternRuleLoader;
 import org.languagetool.rules.patterns.PatternRuleTest;
 import org.languagetool.tools.RuleAsXmlSerializer;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.iparadigms.ipgrammar.VerbConjugationRule;
-
+ 
 @SuppressWarnings("serial")
-public class RuleTestServlet extends HttpServlet{
-    
+public class UpdateServlet extends WebSocketServlet {
+ 
+	private static ArrayList<UpdateSocket> _activeSockets = new ArrayList<UpdateSocket>();
+	
     private final int CONTEXT_SIZE = 40; // characters
     private final Logger LOG = Logger.getLogger(RuleTestServlet.class.getName());
     
@@ -40,8 +38,8 @@ public class RuleTestServlet extends HttpServlet{
     private List<String> ruleIdsIP = new ArrayList<String>();
     private CorpusTextHolder _engCorpus;
     private List<PatternRule> _myRules;
-
-    public RuleTestServlet() throws InstantiationException, IllegalAccessException, IOException{
+    
+    public UpdateServlet() throws InstantiationException, IllegalAccessException, IOException{
         _lang = Language.getLanguageForShortName("en-GB").getClass().newInstance();
         _lang.getSentenceTokenizer().setSingleLineBreaksMarksParagraph(true);
         _langTool = new JLanguageTool(_lang);
@@ -181,6 +179,20 @@ writeLog("RUNNING TEST : " + req.getParameter("test"));
         
 writeLog("RETURNING TEST OUTPUT");
         resp.getWriter().print(output);
+    }
+    
+    @Override
+    public void configure(WebSocketServletFactory factory) {
+        factory.getPolicy().setIdleTimeout(10000);
+        factory.register(UpdateSocket.class);
+    }
+    
+    public static void addActiveSocket (UpdateSocket socket) throws IOException {
+    	_activeSockets.add(socket);
+    }
+    
+    public static void removeActiveSocket (UpdateSocket socket) throws IOException {
+    	_activeSockets.remove(socket);
     }
     
     private void writeLog(String text){

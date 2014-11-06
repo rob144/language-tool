@@ -6,6 +6,9 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 public class ServerManager {
 	
@@ -38,8 +41,12 @@ public class ServerManager {
         chDict.setContextPath("/dictionary");
         chDict.addServlet(new ServletHolder(new DictionaryServlet()), "/");
         
+        ServletContextHandler chUpdate = new ServletContextHandler();
+        chUpdate.setContextPath("/update");
+        chUpdate.addServlet(new ServletHolder(new UpdateServlet()), "/");
+        
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { rh, chEnGb, chEnUs, chTest, chDict });
+        handlers.setHandlers(new Handler[] { rh, chEnGb, chEnUs, chTest, chDict, chUpdate });
         
         server.setHandler(handlers);
 	}
