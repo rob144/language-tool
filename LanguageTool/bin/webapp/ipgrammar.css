@@ -55,6 +55,9 @@ a.tab { margin: 0 10px 5px 0; }
     display:block; 
     width:800px;             
 }
+#pageXofY{
+	position:relative;
+}
 #textMarkedOuter {
     padding:10px 0 0 0;
     background-color:rgb(233, 233, 233);

@@ -68,8 +68,13 @@ LOG.log(Level.INFO, "***Post Servlet****");
     public String doCheck(String text) throws IOException, InstantiationException, IllegalAccessException
     {   
         List<RuleMatch> matches = _langTool.check(text);
+        //TODO: add markup to plain text i.e. <br> and <p> tags for lines
+        String[] strArrLines = text.split("(?:\r\n|\r|\n)");
+System.out.println("text lines: " + strArrLines.length);
 LOG.log(Level.INFO, "Number of matches: {0}", matches.size() );
         final RuleAsXmlSerializer serializer = new RuleAsXmlSerializer();
+        //Do we need to send XML?
+        //TODO: build the line and char objects to contain error ids and messages
         final String xmlResponse = serializer.ruleMatchesToXml(matches, text, CONTEXT_SIZE, _lang);
         return xmlResponse;
     }

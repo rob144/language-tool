@@ -152,6 +152,8 @@ function clearText(){
 
 function showTab(viewId, text){
 
+console.log('text: ' + text);
+	
     $('#tabs a[href="#'+ viewId +'"]').tab('show');
     
     if(viewId == 'markupTab'){
@@ -273,22 +275,7 @@ $( document ).ready(function() {
 		socket.send("thisisatest");
 	});
     
-    $( "#btnSubmitPost" ).click(function(){
-        DATA.plainText = $( "#inputText" ).val();
-        $("#loadingDiv").show();
-        doAjaxRequest('POST', '/' + getLanguageCode() + '/checktext', 'text=' + encodeURIComponent( DATA.plainText ),
-            function(xml){
-                /* remove the <? xml version ... ?> tag */
-                xml = xml.substr(xml.indexOf('?>')+2);  
-                var $xmlObj = $( $.parseXML('<root>'+ xml +'</root>') );
-                var xmlString = $xmlObj.find('root').html().trim();
-                
-                DATA.processErrorXml( $xmlObj.find('error') );
-                new Transformation().setXml(xmlString).setXslt("grammar_errors.xsl").transform("xslOutput");
-                showTab( 'markupTab', DATA.getPageText(1) );
-            }
-        );
-    });
+    $( "#btnSubmitPost" ).click( doTextCheck );
     
     $( "#btnAddWord" ).click(function(){
         var word = $( "#inputTextDictAddWord" ).val();
@@ -386,6 +373,23 @@ $( document ).ready(function() {
     });
     
 });
+
+function doTextCheck(){
+    DATA.plainText = $( "#inputText" ).val();
+    $("#loadingDiv").show();
+    doAjaxRequest('POST', '/' + getLanguageCode() + '/checktext', 'text=' + encodeURIComponent( DATA.plainText ),
+        function(xml){
+            /* remove the <? xml version ... ?> tag */
+            xml = xml.substr(xml.indexOf('?>')+2);  
+            var $xmlObj = $( $.parseXML('<root>'+ xml +'</root>') );
+            var xmlString = $xmlObj.find('root').html().trim();
+            
+            DATA.processErrorXml( $xmlObj.find('error') );
+            new Transformation().setXml(xmlString).setXslt("grammar_errors.xsl").transform("xslOutput");
+            showTab( 'markupTab', DATA.getPageText(1) );
+        }
+    );
+}
 
 function doAjaxRequest(type, url, data, successFunction){
     $.ajax({

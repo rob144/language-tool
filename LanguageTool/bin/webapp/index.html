@@ -39,6 +39,11 @@
 				<li><a href="#linksTab" role="tab" data-toggle="tab">Links</a></li>
 				<li><a href="#dictionaryTab" role="tab" data-toggle="tab">Dictionary</a></li>
 				<li><a href="#testingTab" role="tab" data-toggle="tab">Testing</a></li>
+				<div class='tabRight' id='pagination' href='#'>
+                    <a href='#' onclick='showTab("markupTab", DATA.getPageText(CURRENT_PAGE - 1));'> < </a>
+                    <div id='pageXofY'>Page X of Y</div>
+                    <a href='#' onclick='showTab("markupTab", DATA.getPageText(CURRENT_PAGE + 1));'> > </a>
+                </div>
 			</ul>
             <div class="tab-content">
 				<div class="tab-pane active" id="editorTab">
@@ -48,11 +53,6 @@
 	               </div>
 				</div>
 				<div class="tab-pane" id="markupTab">
-					<div class='tabRight' id='pagination' href='#'>
-	                    <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE - 1));'> < </a>
-	                    <div id='pageXofY'>Page X of Y</div>
-	                    <a href='#' onclick='showTab("textMarked", DATA.getPageText(CURRENT_PAGE + 1));'> > </a>
-	                </div>
 					<div id='textMarkedOuter'>
 						<div id='textMarked'>Text markup.</div>
 					</div>
