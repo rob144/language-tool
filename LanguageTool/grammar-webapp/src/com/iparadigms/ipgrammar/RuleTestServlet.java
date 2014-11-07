@@ -2,14 +2,10 @@ package com.iparadigms.ipgrammar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.AssertionError;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-
-import morfologik.tools.FSADumpTool;
 
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;

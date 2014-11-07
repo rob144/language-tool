@@ -26,27 +26,30 @@ public class DictionaryServlet extends HttpServlet {
     
     public String getResponse (HttpServletRequest req) {
         String output = "Invalid request";
+        String request = req.getParameter("request");
         
-        if (req.getParameter("request").equals("add"))
-            if (!(_dict.searchWord(req.getParameter("line")))) {
+        if (request.equals("add")) {
+        	output = _dict.searchWord(req.getParameter("line"));
+        	
+            if (!(_dict.searchWord(req.getParameter("line")).equals("Item does not exist"))) {
                 _dict.addWord(req.getParameter("line"));
                 output = "Word added";
             } else
                 output = "Item exists, word not added";
+        }
         
-        if (req.getParameter("request").equals("search"))
-            if (_dict.searchWord(req.getParameter("line")))
-                output = "Item exists";
-            else
-                output = "Item does not exist";
+        if (request.equals("search"))
+        	output = _dict.searchWord(req.getParameter("line"));
         
-        if (req.getParameter("request").equals("build")) {
+        if (request.equals("inflections"))
+        	output = _dict.getInflections(req.getParameter("line"));
+        
+        if (request.equals("build")) {
             try {
                 _dict.buildPosDictionary();
                 output = "Dictionary built\tWord count: " + _dict.getWordCount();
             } catch (Exception e) { e.printStackTrace(); }
         }
-        
         return output;
     }
     

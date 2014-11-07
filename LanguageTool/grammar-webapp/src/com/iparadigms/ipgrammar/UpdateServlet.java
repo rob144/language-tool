@@ -7,11 +7,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.languagetool.JLanguageTool;
@@ -160,7 +158,7 @@ writeLog("LOOP NUMBER : " + x);
     public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
         
 writeLog("RUNNING TEST : " + req.getParameter("test"));
-
+		
         String output = null;
         
         if (req.getParameter("test").equals("test_rule"))

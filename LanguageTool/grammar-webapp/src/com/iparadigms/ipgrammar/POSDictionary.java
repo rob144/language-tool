@@ -41,15 +41,34 @@ public class POSDictionary {
         populateLocalDictionary();
     }
     
-    public boolean searchWord (String line) {
-        boolean itemFound = false;
+    public String getInflections (String lemma) {
+    	String matches = "";
+    	
+    	for (String s[] : _posDictionary)
+            if (s[1].equals(lemma)) {
+            	if (!matches.equals(""))
+            		matches += ";";
+            	matches += s[0] + "." + s[2];
+            }
+    	
+    	if (matches.equals(""))
+    		matches = "Word does not exist";
+    	
+    	return matches;
+    }
+    
+    public String searchWord (String line) {
+        String response = "";
         String[] items = line.split("\\.");
         
         for (String s[] : _posDictionary)
             if (s[0].equals(items[0]) && s[1].equals(items[1]) && s[2].equals(items[2]))
-               itemFound = true;
+               response = "Item exists:" + items[0] + "." + items[1] + "." + items[2];
         
-        return itemFound;
+        if (response.equals(""))
+        	response = "Item does not exist";
+        
+        return response;
     }
     
     public void addWord (String line) {

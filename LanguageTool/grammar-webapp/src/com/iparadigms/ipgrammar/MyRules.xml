@@ -64,47 +64,26 @@
             <example type="correct">From March there will be a new procedure in place.</example>
             <example type="incorrect">From <marker>march</marker> there will be a new procedure in place.</example>
         </rule>
-        <rulegroup id="IP_MISSING_SENT_END_STOP" name="Missing sentence end stop.">
-            <rule>
-                <pattern>
-                    <token postag="SENT_START"/>
-                    <token postag="VB|MD|VBZ|VBP" postag_regexp="yes" negate_pos="yes" skip="-1"/>
-                    <marker>
-                        <token postag="SENT_END" regexp="yes" negate="yes">\.|\?|!|"</token><!-- A declarative sentence may also be interrogative when spoken e.g. You need some help. vs You need some help? -->
-                    </marker>
-                </pattern>
-                <message>Declarative sentences must end with a full stop, or, in some cases, an exclamation mark.  Interrogative sentences should end with a question mark.</message>
-                <short>Missing full stop, exclamation mark or question mark.</short>
-                <example type="correct">The bird flew away.</example>
-                <example type="incorrect">The bird flew <marker>away</marker></example>
-            </rule>
-            <!-- <rule>
-                <pattern>
-                    <marker>
-                        <or>
-                            <token chunk="E-NP-singular"/>
-                            <token chunk="E-NP-plural"/>
-                        </or>
-                        <token postag="DT"/>
-                    </marker>
-                    <and>
-                        <token postag="NN:UN" negate_pos="yes" />
-                        <token postag="MD" negate_pos="yes" />
-                    </and>
-                </pattern>
-                <message>Declarative sentences must conclude with an appropriate end stop, or, in some cases, an exclamation mark.  Interrogative sentences should end with a question mark.  Consider inserting a full stop, question mark or comma.</message>
-                <short>Missing full stop, exclamation mark or question mark.</short>
-                <example type="correct">The text raises complex issues. Many argue it's not the author's finest work.</example>
-                <example type="incorrect">The text raises complex <marker>issues Many</marker> argue it's not the author's finest work.</example>
-            </rule> -->
-        </rulegroup>
+        <rule id="IP_MISSING_SENT_END_STOP" name="Missing sentence end stop.">
+            <pattern>
+                <token postag="SENT_START"/>
+                <token postag="VB|MD|VBZ|VBP" postag_regexp="yes" negate_pos="yes" skip="-1"/>
+                <marker>
+                    <token postag="SENT_END" regexp="yes" negate="yes">\.|\?|!|"</token><!-- A declarative sentence may also be interrogative when spoken e.g. You need some help. vs You need some help? -->
+                </marker>
+            </pattern>
+            <message>Declarative sentences must end with a full stop, or, in some cases, an exclamation mark.  Interrogative sentences should end with a question mark.</message>
+            <short>Missing full stop, exclamation mark or question mark.</short>
+            <example type="correct">The bird flew away.</example>
+            <example type="incorrect">The bird flew <marker>away</marker></example>
+        </rule>
         <rule id="IP_INTERROGATIVE_SENT_END_QUESTION_MARK" name="Interrogative sentences must end with a question mark">
-        	<antipattern>
-        		<token postag="SENT_START"/>
+            <antipattern>
+                <token postag="SENT_START"/>
                 <token regexp="yes" skip="-1">can|should|is|would|are</token>
-        		<token>?</token>
-        		<token postag="SENT_END">!</token>
-        	</antipattern>
+                <token>?</token>
+                <token postag="SENT_END">!</token>
+            </antipattern>
             <pattern>
                 <token postag="SENT_START"/>
                 <token regexp="yes" skip="-1">can|should|is|would|are</token>
@@ -117,25 +96,59 @@
             <example type="correct">Is a paperless office really possible?</example>
             <example type="incorrect">Is a paperless office really possible<marker>.</marker></example>
         </rule>
-        <rule id="IP_INTERROGATIVE_WH_SENT_END_QUESTION_MARK" name="Interrogative sentances starting with WH-adverb must end with a question mark">
-        	<antipattern>
-        		<token postag="SENT_START"/>
-                <token postag="WRB" regexp="yes">who|where|why</token>
-                <token postag="EX" skip="-1"/>
-        		<token postag="SENT_END" negate="yes">?</token>
-        	</antipattern>
-            <pattern>
-                <token postag="SENT_START"/>
-                <token postag="WRB" regexp="yes" skip="-1">who|where|why</token>
-                <marker>
-                    <token postag="SENT_END" negate="yes">?</token><!-- detect if sentence does not end with a question mark -->
-                </marker>
-            </pattern>
-            <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
-            <short>Missing question mark.</short>
-            <example type="correct">Who is that?</example>
-            <example type="incorrect">Who is that<marker>.</marker></example>
-        </rule>
+        <rulegroup id="IP_INTERROGATIVE_WH_SENT_END_QUESTION_MARK" name="Interrogative sentences starting with WH-adverb must end with a question mark">
+            <rule>
+                <pattern>
+                    <token postag="SENT_START"/>
+                    <token regexp="yes">who|where|why</token>
+                    <token skip="-1"><exception postag="EX"/></token>
+                    <marker>
+                        <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
+                    </marker>
+                </pattern>
+                <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
+                <short>Missing question mark.</short>
+                <example type="correct">Who is that?</example>
+                <example type="incorrect">Who is that<marker>.</marker></example>
+            </rule>
+            <rule>
+            	<pattern>
+                    <token postag="SENT_START"/>
+                    <token>what</token>
+                    <token postag_regexp="yes" postag="VB.*"/>
+                    <token postag="PRP" skip="-1"/>
+                    <marker>
+                        <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
+                    </marker>
+                </pattern>
+                <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
+                <short>Missing question mark.</short>
+                <example type="correct">What is the issue?</example>
+                <example type="correct">What if I told you, there is no spoon?</example>
+                <example type="incorrect">What is the issue<marker>.</marker></example>
+                <example type="incorrect">What if I told you, there is no spoon<marker>.</marker></example>
+            </rule>
+            <rule>
+                <pattern>
+                    <token postag="SENT_START"/>
+                    <token>what</token>
+                    <or>
+                        <token skip="-1" postag_regexp="yes" postag="MD"/>
+                        <token regexp="yes" skip="-1">if|for</token>
+                    </or>
+                    <marker>
+                        <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
+                    </marker>
+                </pattern>
+                <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
+                <short>Missing question mark.</short>
+                <example type="correct">What is the issue?</example>
+                <example type="correct">What if I told you, there is no spoon?</example>
+                <example type="incorrect">What is the issue<marker>.</marker></example>
+                <example type="incorrect">What if I told you, there is no spoon<marker>.</marker></example>
+            </rule>
+            <!-- When / How -->
+        </rulegroup>
         <rule id="IP_US_COUNTRY_ACRONYM" name="Capitalize US country acronym.">
             <pattern case_sensitive="yes">
                 <token regexp="yes" min="0">(?iu)in|to|from|on|with|inside</token>
@@ -167,9 +180,13 @@
         <rule id="IP_OBJECT_PRONOUNS_COME_AFTER_VERB" name="Object pronouns come after not before verbs.">
             <antipattern>
                 <!-- "She makes me lose my mind" is valid -->
-                <token postag="VB.*" postag_regexp="yes"/>
+                <token postag_regexp="yes" postag="VB.*|IN"/>
                 <token regexp="yes">me|him|her|us|them|whom</token>
                 <token postag="VB|VBD|VBN|VBP|VBZ" postag_regexp="yes"/>
+            </antipattern>
+            <antipattern>
+                <token postag="SENT_START"/>
+                <token>whom</token>
             </antipattern>
             <pattern>
                 <marker>
@@ -183,14 +200,14 @@
             <example type="incorrect"><marker>Him</marker> gave his best.</example>
         </rule>
         <rule id="IP_PLURAL_DONT_USE_APOSTROPHE" name="Don't use an apostrophe to make a plural noun.">
-        	<antipattern>
-        		<token postag="PRP$"/>
-        		<token postag="NN"/>
-        		<token>'</token>
-        		<token>s</token>
-        	</antipattern>
+            <antipattern>
+                <token postag="PRP$"/>
+                <token postag="NN"/>
+                <token>'</token>
+                <token>s</token>
+            </antipattern>
             <pattern>
-            	<token regexp="yes" negate="yes">a|at|some|the|this</token>
+                <token regexp="yes" negate="yes">a|at|some|the|this</token>
                 <token postag_regexp="yes" postag="NN"><exception postag="NNP"/><exception regexp="yes">one|other</exception></token>
                 <marker>
                     <token>'</token>
@@ -218,14 +235,14 @@
                 <example type="incorrect">The computer is yours<marker>'</marker> to use as you wish.</example>
             </rule>
             <rule>
-            	<antipattern>
-            		<token>it</token>
+                <antipattern>
+                    <token>it</token>
                     <token>'</token>
                     <token>s</token>
                     <token><match no="3"/></token>
                     <token>and</token>
                     <token><match no="5"/></token>
-            	</antipattern>
+                </antipattern>
                 <pattern case_sensitive="no">
                     <token>it</token>
                     <marker>
@@ -241,7 +258,7 @@
             </rule>
         </rulegroup>
         <rule id="IP_PLACEMENT_OF_POSSESSIVE_ADJECTIVES" name="Correct placement of possessive adjectives">
-        	<!-- Her marked possibly incorrectly as PRP$ instead of hers as PRP$, lots of false positives due to this -->
+            <!-- Her marked possibly incorrectly as PRP$ instead of hers as PRP$, lots of false positives due to this -->
             <pattern>
                 <token postag="PRP$" chunk="E-NP-singular"><exception>her</exception><exception scope="previous" postag="IN"/></token>
             </pattern>
@@ -268,13 +285,15 @@
             <rule>
                 <pattern>
                     <or>
-                        <token postag_regexp="yes" negate_pos="yes" postag="NN|NNS|NN:U|NN:UN|NP|NNP|PRP\$"/>
+                        <token postag_regexp="yes" negate_pos="yes" postag="NN|NNS|NN:U|NN:UN|NP|NNP|PRP\$|CC"/>
                         <token regexp="yes">my|our|your|their</token>
                     </or>
                     <marker>
                         <token>too</token>
                     </marker>
-                    <token postag_regexp="yes" negate_pos="yes" postag="JJ|RB|DT|NN|SENT_END"><exception postag_regexp="yes" postag="JJ||RB|DT|NN|SENT_END"/></token>
+                    <token postag_regexp="yes" negate_pos="yes" postag="JJ|CC|VBN|RB|DT|NN|SENT_END">
+                        <exception postag_regexp="yes" postag="JJ|CC|VBN|RB|DT|NN|SENT_END"/>
+                    </token>
                 </pattern>
                 <message>Incorrect use of 'too'. Did you mean 'to' or 'two'?</message>
                 <short>Incorrect use of 'too'.</short>

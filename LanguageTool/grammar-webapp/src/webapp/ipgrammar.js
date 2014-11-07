@@ -255,7 +255,7 @@ $( document ).ready(function() {
             $( "#processingTimeOption" ).show();
     }).change();
     
-    var socket = new WebSocket("ws://localhost:6819/update/");
+    /*var socket = new WebSocket("ws://localhost:6819/update/");
     
 	socket.onopen = function(){
 		console.log("connected"); 
@@ -267,7 +267,7 @@ $( document ).ready(function() {
 	
 	socket.onclose = function(){
 		console.log("disconnected"); 
-	};
+	};*/
 	
 	$( "#webSocketBroadcast" ).click(function(){
 		socket.send("thisisatest");
@@ -312,6 +312,20 @@ $( document ).ready(function() {
         doAjaxRequest('GET', '/dictionary', {request : "search", line : content},
             function(response){
                 $('#functionResult').text(response);
+            }
+        )
+    });
+    
+    $( "#btnGetInflections" ).click(function(){
+        var lemma = $( "#inputTextDictGetInflections" ).val();
+        if($.trim(lemma).length <= 0) return;
+        doAjaxRequest('GET', '/dictionary', {request : "inflections", line : lemma},
+            function(response){
+            	var items = response.split(";");
+            	var inflections = "<tr><th>Inflection</th><th>POS Tag</th></tr>";
+            	for (x = 0; items.length > x; x++)
+            		inflections += "<tr><td>" + items[x].split(".")[0] + "</td><td>" + items[x].split(".")[1] + "</td></tr>";
+                $('#functionResult').html(inflections);
             }
         )
     });
