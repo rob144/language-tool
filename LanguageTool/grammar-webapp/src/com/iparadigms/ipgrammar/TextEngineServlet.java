@@ -44,7 +44,7 @@ LOG.log(Level.INFO, "ADDING RULES.");
             }
         }catch (NullPointerException ex) { LOG.log(Level.INFO, ex.toString()); }
         
-        _langTool.addRule(new VerbConjugationRule());
+        //_langTool.addRule(new VerbTestRule());
         
         _langTool.activateDefaultPatternRules();
     }
@@ -56,8 +56,6 @@ LOG.log(Level.INFO, "***Post Servlet****");
         String results = "";
         String text = req.getParameter("text");
         
-LOG.log(Level.INFO, "POSTED TEXT: {0}", text );
-        
         resp.setContentType("text/html");
 
         try{
@@ -65,7 +63,7 @@ LOG.log(Level.INFO, "POSTED TEXT: {0}", text );
         }catch(Exception ex){
             throw new ServletException("Exception thrown in TextEngineServlet doPost()", ex);
         }
-LOG.log(Level.INFO, "RESULTS: {0}", results );
+
         resp.getWriter().print( results );
     }
 
