@@ -130,22 +130,6 @@ var DATA = {
         }
 };  
 
-function setTestText(){
-    $.ajax({
-        type: 'GET',
-        dataType: 'text',
-        url: '/example.txt',
-        success: function(textfile){
-            $("#inputText").text(textfile);
-        },
-        error: function(xhr, textStatus, error){
-            var errorMessage = 'Error getting text.';
-            alert(errorMessage);
-            console.log(errorMessage);
-        }
-    });
-}
-
 function clearText(){
     $('#inputText').val('');
 }
@@ -230,8 +214,8 @@ function getLanguageCode(){
 	
 	var langCode = '';
 	var langText = $('#dropDownLang').text();
-	if(langText.indexOf('English (US)') >= 0) langCode = 'en-US';
-	if(langText.indexOf('English (GB)') >= 0) langCode = 'en-GB';
+	if(	langText.indexOf('English (US)') >= 0 ) langCode = 'en-US';
+	if(	langText.indexOf('English (GB)') >= 0 ) langCode = 'en-GB';
 	return langCode;
 	
 }
@@ -240,22 +224,15 @@ $( document ).ready(function() {
     
     initialiseDocument();
     
-    $( "select" ).change(function(){
-        
-        hideAllOptions();
-        
-        if ($( "#testOption option:selected" ).val() == 0)
-            $( "#testRuleOption" ).show();
-        
-        if ($( "#testOption option:selected" ).val() == 1)
-            $( "#ruleCompetenceOption" ).show();
-        
-        if ($( "#testOption option:selected" ).val() == 2)
-            $( "#falsePositivesOption" ).show();
-        
-        if ($( "#testOption option:selected" ).val() == 3)
-            $( "#processingTimeOption" ).show();
-    }).change();
+    $( "#testOption" ).change(function(){       
+        hideAllOptions(); 
+        switch( parseInt($( "#testOption option:selected" ).val()) ){
+	        case 0:	$( "#testRuleOption" 		).show(); 	break;
+	        case 1: $( "#ruleCompetenceOption" 	).show(); 	break;
+	        case 2: $( "#falsePositivesOption" 	).show(); 	break;
+	        case 3: $( "#processingTimeOption" 	).show(); 	break;
+        } 
+    });
     
     /*var socket = new WebSocket("ws://localhost:6819/update/");
     
@@ -275,102 +252,15 @@ $( document ).ready(function() {
 		socket.send("thisisatest");
 	});
     
-    $( "#btnSubmitPost" ).click( doTextCheck );
-    
-    $( "#btnAddWord" ).click(function(){
-        var word = $( "#inputTextDictAddWord" ).val();
-        var lemma = $( "#inputTextDictAddLemma" ).val();
-        var postag = $( "#inputTextDictAddPosTag" ).val();
-        if($.trim(word).length <= 0 || $.trim(lemma).length <= 0 || $.trim(postag).length <= 0) return;
-        var content = word + "." + lemma + "." + postag; 
-        doAjaxRequest('GET', '/dictionary', {request : "add", line : content},
-            function(response){
-                $('#functionResult').text(response);
-            }
-        )
-    });
-    
-    $( "#btnSearchWord" ).click(function(){
-        var word = $( "#inputTextDictSearchWord" ).val();
-        var lemma = $( "#inputTextDictSearchLemma" ).val();
-        var postag = $( "#inputTextDictSearchPosTag" ).val();
-        if($.trim(word).length <= 0 || $.trim(lemma).length <= 0 || $.trim(postag).length <= 0) return;
-        var content = word + "." + lemma + "." + postag;
-        doAjaxRequest('GET', '/dictionary', {request : "search", line : content},
-            function(response){
-                $('#functionResult').text(response);
-            }
-        )
-    });
-    
-    $( "#btnGetInflections" ).click(function(){
-        var lemma = $( "#inputTextDictGetInflections" ).val();
-        if($.trim(lemma).length <= 0) return;
-        doAjaxRequest('GET', '/dictionary', {request : "inflections", line : lemma},
-            function(response){
-            	var items = response.split(";");
-            	var inflections = "<tr><th>Inflection</th><th>POS Tag</th></tr>";
-            	for (x = 0; items.length > x; x++)
-            		inflections += "<tr><td>" + items[x].split(".")[0] + "</td><td>" + items[x].split(".")[1] + "</td></tr>";
-                $('#functionResult').html(inflections);
-            }
-        )
-    });
-    
-    $( "#btnBuildDictionary" ).click(function(){
-        doAjaxRequest('GET', '/dictionary', {request : "build"},
-            function(response){
-                $('#functionResult').text(response);
-            }
-        )
-    });
-    
-    $( "#btnTestRule" ).click(function(){
-        doAjaxRequest('GET', '/test',
-        {test : "test_rule", rule_id : $( "#ruleId" ).val(), line_start : $( "#lineStart" ).val(), line_limit : $( "#lineEnd" ).val()},
-            function(response){
-                new Transformation().setXml(response).setXslt("test_errors.xsl").transform("testingResults");
-            }
-        )
-    });
-    
-    $( "#btnRuleCompetence" ).click(function(){
-        doAjaxRequest('GET', '/test', {test : "rule_competence"},
-            function(response){
-                $('#testingResults').html(response);
-            }
-        )
-    });
-    
-    $( "#btnFalsePositives" ).click(function(){
-    	$("#loadingDiv").show();
-        doAjaxRequest('GET', '/test', {test : "false_positives"},
-            function(response){
-                var entries = response.split(":");
-                var html = "<tr><th>Rule ID</th><th>Matches</th></tr>";
-                for (x = 0; x < entries.length; x++) {
-                    var column = entries[x].split(",");
-                    html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
-                }
-                $("#loadingDiv").fadeOut(500);
-                $('#testingResults').html(html);
-            }
-        )
-    });
-    
-    $( "#btnProcessingTime" ).click(function(){
-        doAjaxRequest('GET', '/test', {test : "processing_time"},
-            function(response){
-                var entries = response.split(":");
-                var html = "<tr><th>Lines Used</th><th>Rules Used</th><th>Matches</th><th>Time Taken</th></tr>";
-                for (x = 0; x < entries.length; x++) {
-                    var column = entries[x].split(",");
-                    html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td><td>" + column[2] + "</td><td>" + column[3] + "</td></tr>";
-                }
-                $('#testingResults').html(html);
-            }
-        )
-    });
+    $( "#btnSubmitPost" 		).click( doTextCheck 			);
+    $( "#btnAddWord" 			).click( addWordToDictionary 	);
+    $( "#btnSearchWord" 		).click( searchWordInDictionary ); 
+    $( "#btnGetInflections" 	).click( getWordInflections 	);
+    $( "#btnBuildDictionary" 	).click( buildDictionary 		);
+    $( "#btnTestRule" 			).click( runRuleTest 			);
+    $( "#btnRuleCompetence" 	).click( runRuleCompetenceTest 	);
+    $( "#btnFalsePositives" 	).click( runFalsePositivesTest 	);  
+    $( "#btnProcessingTime" 	).click( runProcessingTimeTest	);
     
 });
 
@@ -391,6 +281,107 @@ function doTextCheck(){
     );
 }
 
+function searchWordInDictionary(){
+	 var word = $( "#inputTextDictSearchWord" ).val();
+     var lemma = $( "#inputTextDictSearchLemma" ).val();
+     var postag = $( "#inputTextDictSearchPosTag" ).val();
+     if($.trim(word).length <= 0 
+    		 || $.trim(lemma).length <= 0 
+    		 || $.trim(postag).length <= 0) 
+    	 return;
+     var content = word + "." + lemma + "." + postag;
+     doAjaxRequest('GET', '/dictionary', {request : "search", line : content},
+         function(response){
+             $('#functionResult').text(response);
+         }
+     )
+}
+
+function addWordToDictionary(){
+	 var word = $( "#inputTextDictAddWord" ).val();
+     var lemma = $( "#inputTextDictAddLemma" ).val();
+     var postag = $( "#inputTextDictAddPosTag" ).val();
+     if($.trim(word).length <= 0 |
+    		 | $.trim(lemma).length <= 0 
+    		 || $.trim(postag).length <= 0) 
+    	 return;
+     var content = word + "." + lemma + "." + postag; 
+     doAjaxRequest('GET', '/dictionary', {request : "add", line : content},
+         function(response){
+             $('#functionResult').text(response);
+         }
+     )
+}
+
+function getWordInflections(){
+	var lemma = $( "#inputTextDictGetInflections" ).val();
+    if($.trim(lemma).length <= 0) return;
+    doAjaxRequest('GET', '/dictionary', {request : "inflections", line : lemma},
+        function(response){
+        	var items = response.split(";");
+        	var inflections = "<tr><th>Inflection</th><th>POS Tag</th></tr>";
+        	for (x = 0; items.length > x; x++)
+        		inflections += "<tr><td>" + items[x].split(".")[0] + "</td><td>" + items[x].split(".")[1] + "</td></tr>";
+            $('#functionResult').html(inflections);
+        }
+    )
+}
+
+function buildDictionary(){
+    doAjaxRequest('GET', '/dictionary', {request : "build"},
+        function(response){
+            $('#functionResult').text(response);
+        }
+    )
+}
+
+function runRuleTest(){
+    doAjaxRequest('GET', '/test',
+    {test : "test_rule", rule_id : $( "#ruleId" ).val(), line_start : $( "#lineStart" ).val(), line_limit : $( "#lineEnd" ).val()},
+        function(response){
+            new Transformation().setXml(response).setXslt("test_errors.xsl").transform("testingResults");
+        }
+    )
+}
+
+function runRuleCompetenceTest(){
+    doAjaxRequest('GET', '/test', {test : "rule_competence"},
+        function(response){
+            $('#testingResults').html(response);
+        }
+    )
+}
+
+function runFalsePositivesTest(){
+	$("#loadingDiv").show();
+    doAjaxRequest('GET', '/test', {test : "false_positives"},
+        function(response){
+            var entries = response.split(":");
+            var html = "<tr><th>Rule ID</th><th>Matches</th></tr>";
+            for (x = 0; x < entries.length; x++) {
+                var column = entries[x].split(",");
+                html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
+            }
+            $("#loadingDiv").fadeOut(500);
+            $('#testingResults').html(html);
+        }
+    )
+}
+
+function runProcessingTimeTest(){
+    doAjaxRequest('GET', '/test', {test : "processing_time"},
+        function(response){
+            var entries = response.split(":");
+            var html = "<tr><th>Lines Used</th><th>Rules Used</th><th>Matches</th><th>Time Taken</th></tr>";
+            for (x = 0; x < entries.length; x++) {
+                var column = entries[x].split(",");
+                html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td><td>" + column[2] + "</td><td>" + column[3] + "</td></tr>";
+            }
+            $('#testingResults').html(html);
+        }
+    )
+}
+
 function doAjaxRequest(type, url, data, successFunction){
     $.ajax({
         type: type,
@@ -406,26 +397,48 @@ function doAjaxRequest(type, url, data, successFunction){
     });
 }
 
+function setTestText(){
+    $.ajax({
+        type: 'GET',
+        dataType: 'text',
+        url: '/example.txt',
+        success: function(textfile){
+            $("#inputText").text(textfile);
+        },
+        error: function(xhr, textStatus, error){
+            var errorMessage = 'Error getting text.';
+            alert(errorMessage);
+            console.log(errorMessage);
+        }
+    });
+}
+
 function initialiseDocument(){
     setTestText();
-    $( "#ruleTestPopOver" ).popover();
-    $( "#ruleCompetencePopOver" ).popover();
-    $( "#falsePositivesPopOver" ).popover();
-    $( "#processingTimePopOver" ).popover();
     
-    $( "#ruleCompetenceOption" ).hide();
-    $( "#falsePositivesOption" ).hide();
-    $( "#processingTimeOption" ).hide();
+    $( [ $("#ruleTestPopOver"),
+    		$("#ruleCompetencePopOver"),
+    		$("#falsePositivesPopOver"),
+    		$("#processingTimePopOver") ] )
+    		.each( function(){ $(this).popover(); } ); 
+    
+    $( [ $("#ruleCompetenceOption"),
+    		$("#falsePositivesOption"),
+    		$("#processingTimeOption" ) ] )
+    		.each( function(){ $(this).hide(); } );
 }
 
 function hideAllOptions(){
-    $( "#ruleTestPopOver" ).popover('hide');
-    $( "#ruleCompetencePopOver" ).popover('hide');
-    $( "#falsePositivesPopOver" ).popover('hide');
-    $( "#processingTimePopOver" ).popover('hide');
+	
+    $( [ $("#ruleTestPopOver"),
+    		$("#ruleCompetencePopOver"),
+    		$("#falsePositivesPopOver"),
+    		$("#processingTimePopOver") ] )
+    		.each( function(){ $(this).popover('hide'); } );
     
-    $( "#testRuleOption" ).hide();
-    $( "#ruleCompetenceOption" ).hide();
-    $( "#falsePositivesOption" ).hide();
-    $( "#processingTimeOption" ).hide();
+    $( [ $("#testRuleOption"),
+    		$("#ruleCompetenceOption"),
+    		$("#falsePositivesOption"),
+    		$("#processingTimeOption") ] )
+    		.each( function(){ $(this).hide(); } );
 }

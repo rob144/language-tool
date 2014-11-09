@@ -6,7 +6,7 @@ public class ServerMain {
 	
     public static void main(String[] args) throws Exception {
         
-System.out.println(System.getProperty("java.runtime.version"));
+System.out.println("Java version: " + System.getProperty("java.runtime.version"));
     	
     	if (test)
             runUnitTests();
