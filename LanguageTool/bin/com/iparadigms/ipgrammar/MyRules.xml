@@ -100,8 +100,7 @@
             <rule>
                 <pattern>
                     <token postag="SENT_START"/>
-                    <token regexp="yes">who|where|why</token>
-                    <token skip="-1"><exception postag="EX"/></token>
+                    <token regexp="yes" skip="-1">who</token>
                     <marker>
                         <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
                     </marker>
@@ -112,10 +111,38 @@
                 <example type="incorrect">Who is that<marker>.</marker></example>
             </rule>
             <rule>
+                <pattern>
+                    <token postag="SENT_START"/>
+                    <token regexp="yes">why</token>
+                    <token skip="-1"><exception postag="PRP"/></token>
+                    <marker>
+                        <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
+                    </marker>
+                </pattern>
+                <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
+                <short>Missing question mark.</short>
+                <example type="correct">Who is that?</example>
+                <example type="incorrect">Who is that<marker>.</marker></example>
+            </rule>
+            <rule>
+	            <pattern>
+	                <token postag="SENT_START"/>
+	                <token regexp="yes">where</token>
+	                <token skip="-1"><exception postag_regexp="yes" postag="EX|NN.*|DT|JJ|TO"/></token>
+	                <marker>
+	                    <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
+	                </marker>
+	            </pattern>
+	            <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
+	            <short>Missing question mark.</short>
+	            <example type="correct">Who is that?</example>
+	            <example type="incorrect">Who is that<marker>.</marker></example>
+	        </rule>
+            <rule>
             	<pattern>
                     <token postag="SENT_START"/>
                     <token>what</token>
-                    <token postag_regexp="yes" postag="VB.*"/>
+                    <token postag_regexp="yes" postag="VB|VBD|VBG|VBN|VBP"/>
                     <token postag="PRP" skip="-1"/>
                     <marker>
                         <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
@@ -147,7 +174,34 @@
                 <example type="incorrect">What is the issue<marker>.</marker></example>
                 <example type="incorrect">What if I told you, there is no spoon<marker>.</marker></example>
             </rule>
-            <!-- When / How -->
+            <rule>
+	            <pattern>
+	                <token postag="SENT_START"/>
+	                <token regexp="yes">when</token>
+	                <token skip="-1"><exception postag_regexp="yes" postag="PRP|PRP\$|DT|VBN|VBG|NNP|NNS|NN:UN|NN:U"/></token>
+	                <marker>
+	                    <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
+	                </marker>
+	            </pattern>
+	            <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
+	            <short>Missing question mark.</short>
+	            <example type="correct">Who is that?</example>
+	            <example type="incorrect">Who is that<marker>.</marker></example>
+	        </rule>
+	        <rule>
+	            <pattern>
+	                <token postag="SENT_START"/>
+	                <token regexp="yes">how</token>
+	                <token skip="-1"><exception postag_regexp="yes" postag="PRP|TO|RB|NN.*"/></token>
+	                <marker>
+	                    <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
+	                </marker>
+	            </pattern>
+	            <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
+	            <short>Missing question mark.</short>
+	            <example type="correct">Who is that?</example>
+	            <example type="incorrect">Who is that<marker>.</marker></example>
+	        </rule>
         </rulegroup>
         <rule id="IP_US_COUNTRY_ACRONYM" name="Capitalize US country acronym.">
             <pattern case_sensitive="yes">
@@ -268,6 +322,28 @@
             <example type="correct">You forced our action here.</example>
             <example type="incorrect">This old car is <marker>my</marker>.</example>
         </rule> 
+        
+        <rulegroup id="IP_TEMP_TO_TWO_TOO" name="IP Temp">
+        	<rule>
+        		<pattern>
+        			<token>
+        				<exception postag_regexp="yes" postag="VB.*"/>
+        				<exception scope="next" postag_regexp="yes" postag="JJ.*"/>
+        			</token>
+                    <marker>
+                    	<token>to</token>
+                    </marker>
+                    <token postag="NNS">
+                    	<exception scope="previous" postag_regexp="yes" postag="JJ.*"/>
+                    </token>
+                </pattern>
+                <message>Use 'two' instead of 'to' if you mean the number two.</message>
+                <short>Use 'two' instead of 'to' if you mean the number two.</short>
+                <example type="correct">Two beers, please.</example>
+                <example type="incorrect"><marker>To</marker> beers, please.</example>
+        	</rule>
+        </rulegroup>
+        
         <rulegroup id="IP_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
             <rule>
                 <pattern>

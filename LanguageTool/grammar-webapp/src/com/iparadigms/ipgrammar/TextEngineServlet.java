@@ -19,7 +19,7 @@ import com.iparadigms.ipgrammar.VerbConjugationRule;
 @SuppressWarnings("serial")
 public class TextEngineServlet extends HttpServlet{
 
-    private final int CONTEXT_SIZE = 40; // characters
+    private final int CONTEXT_SIZE = 80; // characters
     private final String RULES_FILENAME = "MyRules.xml";
     private final Logger LOG = Logger.getLogger(TextEngineServlet.class.getName());
     private Language _lang;

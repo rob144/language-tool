@@ -1,14 +1,20 @@
 package com.iparadigms.ipgrammar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.io.IOException;
 import java.lang.AssertionError;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+import org.languagetool.AnalyzedSentence;
+import org.languagetool.AnalyzedTokenReadings;
 import org.languagetool.JLanguageTool;
+import org.languagetool.JLanguageTool.ParagraphHandling;
 import org.languagetool.Language;
+import org.languagetool.markup.AnnotatedTextBuilder;
 import org.languagetool.rules.Rule;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.en.EnglishPatternRuleTest;
@@ -27,7 +33,7 @@ import com.iparadigms.ipgrammar.VerbConjugationRule;
 @SuppressWarnings("serial")
 public class RuleTestServlet extends HttpServlet{
     
-    private final int CONTEXT_SIZE = 40; // characters
+    private final int CONTEXT_SIZE = 80; // characters
     private final Logger LOG = Logger.getLogger(RuleTestServlet.class.getName());
     
     //Tools
@@ -67,8 +73,8 @@ public class RuleTestServlet extends HttpServlet{
     }
     
     private String testIPRules(String ruleId, int lineStart, int lineLimit) throws IOException {
+    	findWordContext ("to");
         
-        lineLimit = lineLimit == 0 ? 20000 : lineLimit;
         disableAllActiveRules();
         
         if (ruleId.equals("###"))
@@ -83,6 +89,101 @@ public class RuleTestServlet extends HttpServlet{
         RuleAsXmlSerializer serializer = new RuleAsXmlSerializer();
         String xmlResponse = serializer.ruleMatchesToXml(matches, _engCorpus.getLinesToString(lineStart, lineLimit), CONTEXT_SIZE, _lang);
         return xmlResponse;
+    }
+    
+    private String findWordContext (String word) throws IOException {
+    	_engCorpus.getLinesToString(0, 5000);
+    	
+    	List<String> posTagNames = new ArrayList<String>();
+    	
+    	posTagNames.add("CC");
+    	posTagNames.add("CD");
+    	posTagNames.add("DT");
+    	posTagNames.add("EX");
+    	posTagNames.add("FW");
+    	posTagNames.add("IN");
+    	posTagNames.add("JJ");
+    	posTagNames.add("JJR");
+    	posTagNames.add("JJS");
+    	posTagNames.add("LS");
+    	posTagNames.add("MD");
+    	posTagNames.add("NN");
+    	posTagNames.add("NNS");
+    	posTagNames.add("NN:U");
+    	posTagNames.add("NN:UN");
+    	posTagNames.add("NNP");
+    	posTagNames.add("NNPS");
+    	posTagNames.add("PDT");
+    	posTagNames.add("POS");
+    	posTagNames.add("PRP");
+    	posTagNames.add("PRP$");
+    	posTagNames.add("RB");
+    	posTagNames.add("RBR");
+    	posTagNames.add("RBS");
+    	posTagNames.add("RP");
+    	posTagNames.add("SYM");
+    	posTagNames.add("TO");
+    	posTagNames.add("UH");
+    	posTagNames.add("VB");
+    	posTagNames.add("VBD");
+    	posTagNames.add("VBG");
+    	posTagNames.add("VBN");
+    	posTagNames.add("VBP");
+    	posTagNames.add("VBZ");
+    	posTagNames.add("WDT");
+    	posTagNames.add("WP");
+    	posTagNames.add("WP$");
+    	posTagNames.add("WRB");
+    	posTagNames.add("``");
+    	posTagNames.add(",");
+    	posTagNames.add("''");
+    	posTagNames.add(".");
+    	posTagNames.add(":");
+    	posTagNames.add("$");
+    	posTagNames.add("#");
+    	posTagNames.add("SENT_START");
+    	posTagNames.add("SENT_END");
+    	
+    	int[] preceedingTagsOccurence = new int[47];
+    	int[] proceedingTagsOccurence = new int[47];
+    	
+    	int z = 0;
+    	
+    	String[] corpus = _engCorpus.getLinesToString(0, 5000).split("\n");
+    	
+    	for (String line : corpus) {
+    	  	AnalyzedSentence s = _langTool.getAnalyzedSentence(line);
+    	  	AnalyzedTokenReadings[] tokens = s.getTokensWithoutWhitespace();
+    	  	
+    	  	for (int x = 0; tokens.length > x; x++) {
+    	  		if (tokens[x].getToken().equals(word)) {
+    	  			for (int y = 0; tokens[x+1].getReadingsLength() > y; y++) {
+    	  				if (tokens[x+1].getAnalyzedToken(y).getPOSTag() != null) {
+    	  					z = posTagNames.indexOf(tokens[x+1].getAnalyzedToken(y).getPOSTag());
+	    	  				proceedingTagsOccurence[z] += 1;
+    	  				}
+    	  			}
+    	  			for (int y = 0; tokens[x-1].getReadingsLength() > y; y++) {
+    	  				if (tokens[x-1].getAnalyzedToken(y).getPOSTag() != null) {
+    	  					z = posTagNames.indexOf(tokens[x-1].getAnalyzedToken(y).getPOSTag());
+    	  					preceedingTagsOccurence[z] += 1;
+    	  				}
+    	  			}
+    	  		}
+    	  	}
+    	}
+
+    	System.out.println("PRECEEDING TAGS");
+    	for (int y = 0; preceedingTagsOccurence.length > y; y++) {
+    		System.out.println(posTagNames.get(y) + " " + preceedingTagsOccurence[y]);
+    	}
+    	System.out.println("############################################");
+    	System.out.println("PRECEEDING TAGS");
+    	for (int y = 0; proceedingTagsOccurence.length > y; y++) {
+    		System.out.println(posTagNames.get(y) + " " + proceedingTagsOccurence[y]);
+    	}
+    	
+    	return "counts";
     }
     
     private String testRuleCompetence () throws IOException {

@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CorpusTextHolder {
     
-    private int lineLimit = 20000;
+    private int lineLimit = 50000;
     
     private final String RESOURCES_DIR = "grammar-webapp/src/com/iparadigms/ipgrammar/resources/";
     private final String TATOEBA_CORPUS_CSV = RESOURCES_DIR + "sentences.csv";
