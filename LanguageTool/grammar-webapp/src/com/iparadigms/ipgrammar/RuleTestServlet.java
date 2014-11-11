@@ -1,9 +1,7 @@
 package com.iparadigms.ipgrammar;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.io.IOException;
 import java.lang.AssertionError;
 import java.util.logging.Logger;
@@ -12,9 +10,7 @@ import java.util.logging.Level;
 import org.languagetool.AnalyzedSentence;
 import org.languagetool.AnalyzedTokenReadings;
 import org.languagetool.JLanguageTool;
-import org.languagetool.JLanguageTool.ParagraphHandling;
 import org.languagetool.Language;
-import org.languagetool.markup.AnnotatedTextBuilder;
 import org.languagetool.rules.Rule;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.en.EnglishPatternRuleTest;
@@ -73,8 +69,7 @@ public class RuleTestServlet extends HttpServlet{
     }
     
     private String testIPRules(String ruleId, int lineStart, int lineLimit) throws IOException {
-    	findWordContext ("to");
-        
+    	
         disableAllActiveRules();
         
         if (ruleId.equals("###"))
@@ -91,11 +86,9 @@ public class RuleTestServlet extends HttpServlet{
         return xmlResponse;
     }
     
-    private String findWordContext (String word) throws IOException {
-    	_engCorpus.getLinesToString(0, 5000);
+    private String findWordContext (String word, int lineStart, int lineLimit) throws IOException {
     	
     	List<String> posTagNames = new ArrayList<String>();
-    	
     	posTagNames.add("CC");
     	posTagNames.add("CD");
     	posTagNames.add("DT");
@@ -144,46 +137,79 @@ public class RuleTestServlet extends HttpServlet{
     	posTagNames.add("SENT_START");
     	posTagNames.add("SENT_END");
     	
+    	String[] exampleLinesPrevious = new String[47];
+    	String[] exampleLinesProceeding = new String[47];
     	int[] preceedingTagsOccurence = new int[47];
     	int[] proceedingTagsOccurence = new int[47];
-    	
+    	String[] corpus = _engCorpus.getLinesToString(lineStart, lineLimit).split("\n");
     	int z = 0;
     	
-    	String[] corpus = _engCorpus.getLinesToString(0, 5000).split("\n");
-    	
-    	for (String line : corpus) {
+        String[] phrase = word.split(" ");
+
+        for (String line : corpus) { //For each line in the corpus extract tokens
     	  	AnalyzedSentence s = _langTool.getAnalyzedSentence(line);
     	  	AnalyzedTokenReadings[] tokens = s.getTokensWithoutWhitespace();
     	  	
-    	  	for (int x = 0; tokens.length > x; x++) {
-    	  		if (tokens[x].getToken().equals(word)) {
-    	  			for (int y = 0; tokens[x+1].getReadingsLength() > y; y++) {
-    	  				if (tokens[x+1].getAnalyzedToken(y).getPOSTag() != null) {
-    	  					z = posTagNames.indexOf(tokens[x+1].getAnalyzedToken(y).getPOSTag());
+    	  	for (int x = 0; tokens.length > x; x++) { //For each token in the sentence
+
+                boolean match = true;
+                int count = 0;
+
+                for (int b = 0; b < phrase.length; b++) { //Check if the token [and subsequent tokens if specified] matches
+                	
+                	boolean isPosTag = false;
+                	String item = "";
+                	
+                	if (phrase[b].contains("%")) {
+                		isPosTag = true;
+                		item = phrase[b].replace("%", "");
+                	}
+                	
+                    if (!tokens[(x+b)].getToken().equals(phrase[b]) && !isPosTag) { //If word (no %), check if matches
+                    	match = false;
+                        break;
+                    }
+                    if (!tokens[(x+b)].hasPosTag(item) && isPosTag) { //If tag (% present), check if matches
+                    	match = false;
+                    	break;
+                    }
+                    count = b + 1;
+                }
+
+    	  		if (match) { //Record POS tags of preceding and proceeding tokens if match found
+    	  			for (int y = 0; tokens[x+count].getReadingsLength() > y; y++) {
+    	  				if (tokens[x+count].getAnalyzedToken(y).getPOSTag() != null) {
+    	  					z = posTagNames.indexOf(tokens[x+count].getAnalyzedToken(y).getPOSTag());
 	    	  				proceedingTagsOccurence[z] += 1;
+	    	  				
+	    	  				if (exampleLinesProceeding[z] == null && tokens[x+count].getReadingsLength() == 1)
+	    	  					exampleLinesProceeding[z] = line;
     	  				}
     	  			}
     	  			for (int y = 0; tokens[x-1].getReadingsLength() > y; y++) {
     	  				if (tokens[x-1].getAnalyzedToken(y).getPOSTag() != null) {
     	  					z = posTagNames.indexOf(tokens[x-1].getAnalyzedToken(y).getPOSTag());
     	  					preceedingTagsOccurence[z] += 1;
+    	  					
+    	  					if (exampleLinesPrevious[z] == null && tokens[x-1].getReadingsLength() == 1)
+    	  						exampleLinesPrevious[z] = line;
     	  				}
     	  			}
     	  		}
     	  	}
     	}
-
-    	System.out.println("PRECEEDING TAGS");
-    	for (int y = 0; preceedingTagsOccurence.length > y; y++) {
-    		System.out.println(posTagNames.get(y) + " " + preceedingTagsOccurence[y]);
-    	}
-    	System.out.println("############################################");
-    	System.out.println("PRECEEDING TAGS");
-    	for (int y = 0; proceedingTagsOccurence.length > y; y++) {
-    		System.out.println(posTagNames.get(y) + " " + proceedingTagsOccurence[y]);
-    	}
     	
-    	return "counts";
+    	String output = "<tr><th>Tag</th><th>Pre</th><th>Post</th><th>Example</th></tr>";
+    	for (int y = 0; preceedingTagsOccurence.length > y; y++)
+    		output += "<tr><td>"
+    			+ posTagNames.get(y) + "</td><td>"
+    			+ preceedingTagsOccurence[y] + "</td><td>"
+    			+ proceedingTagsOccurence[y] + "</td><td>"
+    			+ exampleLinesPrevious[y]
+    			+ "</td></tr>"
+    			+"<tr><td></td><td></td><td></td><td>" + exampleLinesProceeding[y] + "</td></tr>";
+    	
+    	return output;
     }
     
     private String testRuleCompetence () throws IOException {
@@ -275,6 +301,11 @@ writeLog("RUNNING TEST : " + req.getParameter("test"));
         
         if (req.getParameter("test").equals("processing_time"))
             output = testRulesProcessTime();
+        
+        if (req.getParameter("test").equals("context"))
+        	output = findWordContext(req.getParameter("word"),
+        			Integer.parseInt(req.getParameter("line_start")),
+        			Integer.parseInt(req.getParameter("line_limit")));
         
 writeLog("RETURNING TEST OUTPUT");
         resp.getWriter().print(output);

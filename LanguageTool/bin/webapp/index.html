@@ -102,15 +102,16 @@
 				            <option value="1">Rule Competence</option>
 				            <option value="2">False Positives</option>
 				            <option value="3">Processing Time</option>
+				            <option value="4">Word Context</option>
 				        </select>
 
 				        <div id="testControls">
-				            <div id="testRuleOption">
+				        	<div id="testRuleOption">
     				            <div class="formRow">
     				                <input type="submit" id="btnTestRule" class="btn btn-success" class="form-control" value="Test Rule"/>
-        				            <input type="text" size="56" id='ruleId' name='ruleId' placeholder='Rule ID'/>
-        				            <input type="text" size="5" id='lineStart' name='lineStart' placeholder='Start Line'/>
-        				            <input type="text" size="5" id='lineEnd' name='lineEnd' placeholder='End Line'/>
+        				            <input type="text" size="56" id='ruleTestId' name='ruleId' placeholder='Rule ID'/>
+        				            <input type="text" size="5" id='ruleTestLineStart' name='lineStart' placeholder='Start Line'/>
+        				            <input type="text" size="5" id='ruleTestLineEnd' name='lineEnd' placeholder='End Line'/>
         				            
         				            <button id="ruleTestPopOver" 
                                         type="button" 
@@ -123,6 +124,7 @@
                                     
                                     <input type="submit" id="webSocketBroadcast" class="btn btn-success" class="form-control" value="WS Broadcast"/>
     				            </div>
+    				            <div id="ruleTestResult"></div>
     				        </div>
     				        <div id="ruleCompetenceOption">
     				            <div class="formRow">
@@ -137,6 +139,7 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </button>
                                 </div>
+                                <div id="ruleCompetenceResult"></div>
     				        </div>
     				        <div id="falsePositivesOption">
         				        <div class="formRow">
@@ -151,8 +154,9 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </button>
                                 </div>
+                                <div id="falsePositiveResult"></div>
                             </div>
-                            <div id="processingTimeOption"> 
+                            <div id="processingTimeOption">
                                 <div class="formRow">
                                     <input type="submit" id="btnProcessingTime" class="btn btn-success" class="form-control" value="Processing Time"/>
                                     
@@ -165,10 +169,28 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </button>
                                 </div>
+                                <div id="processingTimeResult"></div>
+                            </div>
+                            <div id="wordContextOption">
+                            	<div class="formRow">
+                            		<input type="submit" id="btnWordContext" class="btn btn-success" class="form-control" value="Word Context"/>
+                            		<input type="text" size="56" id='wordContextWord' name='word' placeholder='Word'/>
+                            		<input type="text" size="5" id='wordContextLineStart' name='lineStart' placeholder='Start Line'/>
+        				            <input type="text" size="5" id='wordContextLineEnd' name='lineEnd' placeholder='End Line'/>
+                                    
+                                    <button id="wordContextPopOver" 
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        data-container="body" 
+                                        data-toggle="popover" data-placement="bottom" 
+                                        data-content="Gets the POS tags of the preceeding and proceeding tokens of a given word/sequence, seperated by spaces, with POS tags being substitutable using %, ie '%EX will' = 'there will'">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </button>
+                            	</div>
+                            	<div id="wordContextResult"></div>
                             </div>
                         </div>
 				    </div>
-				    <div id="testingResults"></div>
 				</div>
 			</div>
         </div>

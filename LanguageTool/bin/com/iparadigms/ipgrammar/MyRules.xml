@@ -322,42 +322,45 @@
             <example type="correct">You forced our action here.</example>
             <example type="incorrect">This old car is <marker>my</marker>.</example>
         </rule> 
-        
-        <rulegroup id="IP_TEMP_TO_TWO_TOO" name="IP Temp">
-        	<rule>
+        <rulegroup id="IP_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
+	        <rule>
         		<pattern>
-        			<token>
-        				<exception postag_regexp="yes" postag="VB.*"/>
-        				<exception scope="next" postag_regexp="yes" postag="JJ.*"/>
-        			</token>
+        			<token postag="EX"/>
+        			<token postag_regexp="yes" postag="VB.*"/>
                     <marker>
                     	<token>to</token>
                     </marker>
-                    <token postag="NNS">
-                    	<exception scope="previous" postag_regexp="yes" postag="JJ.*"/>
-                    </token>
                 </pattern>
-                <message>Use 'two' instead of 'to' if you mean the number two.</message>
-                <short>Use 'two' instead of 'to' if you mean the number two.</short>
-                <example type="correct">Two beers, please.</example>
-                <example type="incorrect"><marker>To</marker> beers, please.</example>
+                <message>Incorrect use of 'to', reconsider phrasing.</message>
+                <short>Incorrect use of 'to'.</short>
+                <example type="correct">There were two main theories.</example>
+                <example type="correct">There were too many redirects.</example>
+                <example type="incorrect">There were <marker>to</marker> main theories.</example>
         	</rule>
-        </rulegroup>
-        
-        <rulegroup id="IP_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
-            <rule>
-                <pattern>
-                    <token regexp="yes">of|by|before|at|until</token>
+        	<rule>
+        		<pattern>
                     <marker>
-                        <token postag="TO"/>
+                    	<token>to</token>
                     </marker>
-                    <token chunk="E-NP-plural"/>
+                    <token min="0" postag_regexp="yes" postag="JJ.*"/>
+                    <token postag_regexp="yes" postag="NN.*"><exception negate_pos="yes" postag_regexp="yes" postag="NN.*"/></token>
+                    <token postag_regexp="yes" postag="VB.*"><exception negate_pos="yes" postag_regexp="yes" postag="VB.*"/></token>
                 </pattern>
-                <message>Use 'two' instead of 'to' if you mean the number two.</message>
-                <short>Use 'two' instead of 'to' if you mean the number two.</short>
-                <example type="correct">We are of two souls.</example>
-                <example type="incorrect">We are of <marker>to</marker> souls.</example>
-            </rule>
+                <message>Incorrect use of 'to', reconsider phrasing.</message>
+                <short>Incorrect use of 'to'.</short>
+                <example type="correct">Two potatoes were thrown.</example>
+                <example type="incorrect"><marker>To</marker> helpful potatoes were thrown.</example>
+        	</rule>
+        	<rule>
+        		<pattern>
+                    <marker>
+                    	<token>to<exception scope="previous" postag_regexp="yes" postag="VB.*"/></token>
+                    </marker>
+                    <token postag="SENT_END"/>
+                </pattern>
+                <message>Incorrect use of 'to', reconsider phrasing.</message>
+                <short>Incorrect use of 'to'.</short>
+        	</rule>
             <rule>
                 <pattern>
                     <or>

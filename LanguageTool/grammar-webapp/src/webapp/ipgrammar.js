@@ -220,50 +220,6 @@ function getLanguageCode(){
 	
 }
 
-$( document ).ready(function() {
-    
-    initialiseDocument();
-    
-    $( "#testOption" ).change(function(){       
-        hideAllOptions(); 
-        switch( parseInt($( "#testOption option:selected" ).val()) ){
-	        case 0:	$( "#testRuleOption" 		).show(); 	break;
-	        case 1: $( "#ruleCompetenceOption" 	).show(); 	break;
-	        case 2: $( "#falsePositivesOption" 	).show(); 	break;
-	        case 3: $( "#processingTimeOption" 	).show(); 	break;
-        } 
-    });
-    
-    /*var socket = new WebSocket("ws://localhost:6819/update/");
-    
-	socket.onopen = function(){
-		console.log("connected"); 
-	};
-	
-	socket.onmessage = function (message){
-		console.log(message.data);
-	};
-	
-	socket.onclose = function(){
-		console.log("disconnected"); 
-	};*/
-	
-	$( "#webSocketBroadcast" ).click(function(){
-		socket.send("thisisatest");
-	});
-    
-    $( "#btnSubmitPost" 		).click( doTextCheck 			);
-    $( "#btnAddWord" 			).click( addWordToDictionary 	);
-    $( "#btnSearchWord" 		).click( searchWordInDictionary ); 
-    $( "#btnGetInflections" 	).click( getWordInflections 	);
-    $( "#btnBuildDictionary" 	).click( buildDictionary 		);
-    $( "#btnTestRule" 			).click( runRuleTest 			);
-    $( "#btnRuleCompetence" 	).click( runRuleCompetenceTest 	);
-    $( "#btnFalsePositives" 	).click( runFalsePositivesTest 	);  
-    $( "#btnProcessingTime" 	).click( runProcessingTimeTest	);
-    
-});
-
 function doTextCheck(){
     DATA.plainText = $( "#inputText" ).val();
     $("#loadingDiv").show();
@@ -285,9 +241,9 @@ function searchWordInDictionary(){
 	 var word = $( "#inputTextDictSearchWord" ).val();
      var lemma = $( "#inputTextDictSearchLemma" ).val();
      var postag = $( "#inputTextDictSearchPosTag" ).val();
-     if($.trim(word).length <= 0 
-    		 || $.trim(lemma).length <= 0 
-    		 || $.trim(postag).length <= 0) 
+     if($.trim(word).length <= 0
+    		 || $.trim(lemma).length <= 0
+    		 || $.trim(postag).length <= 0)
     	 return;
      var content = word + "." + lemma + "." + postag;
      doAjaxRequest('GET', '/dictionary', {request : "search", line : content},
@@ -301,8 +257,8 @@ function addWordToDictionary(){
 	 var word = $( "#inputTextDictAddWord" ).val();
      var lemma = $( "#inputTextDictAddLemma" ).val();
      var postag = $( "#inputTextDictAddPosTag" ).val();
-     if($.trim(word).length <= 0 |
-    		 | $.trim(lemma).length <= 0 
+     if($.trim(word).length <= 0
+    		 || $.trim(lemma).length <= 0
     		 || $.trim(postag).length <= 0) 
     	 return;
      var content = word + "." + lemma + "." + postag; 
@@ -337,17 +293,29 @@ function buildDictionary(){
 
 function runRuleTest(){
     doAjaxRequest('GET', '/test',
-    {test : "test_rule", rule_id : $( "#ruleId" ).val(), line_start : $( "#lineStart" ).val(), line_limit : $( "#lineEnd" ).val()},
+    {test : "test_rule", rule_id : $( "#ruleTestId" ).val(), line_start : $( "#ruleTestLineStart" ).val(), line_limit : $( "#ruleTestLineEnd" ).val()},
         function(response){
-            new Transformation().setXml(response).setXslt("test_errors.xsl").transform("testingResults");
+            new Transformation().setXml(response).setXslt("test_errors.xsl").transform("ruleTestResult");
         }
+    )
+}
+
+function getWordContext(){
+    doAjaxRequest('GET', '/test',
+    	{test : "context",
+    		word : $( "#wordContextWord" ).val(),
+    		line_start : $( "#wordContextLineStart" ).val(),
+    		line_limit : $( "#wordContextLineEnd" ).val()},
+    	function(response){
+    		$('#wordContextResult').html(response);
+    	}
     )
 }
 
 function runRuleCompetenceTest(){
     doAjaxRequest('GET', '/test', {test : "rule_competence"},
         function(response){
-            $('#testingResults').html(response);
+            $('#ruleCompeteneResult').html(response);
         }
     )
 }
@@ -363,7 +331,7 @@ function runFalsePositivesTest(){
                 html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
             }
             $("#loadingDiv").fadeOut(500);
-            $('#testingResults').html(html);
+            $('#falsePositiveResult').html(html);
         }
     )
 }
@@ -377,24 +345,9 @@ function runProcessingTimeTest(){
                 var column = entries[x].split(",");
                 html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td><td>" + column[2] + "</td><td>" + column[3] + "</td></tr>";
             }
-            $('#testingResults').html(html);
+            $('#processingTimeResult').html(html);
         }
     )
-}
-
-function doAjaxRequest(type, url, data, successFunction){
-    $.ajax({
-        type: type,
-        dataType: 'text',
-        url: url,
-        data: data,
-        success: successFunction,
-        error: function(xhr, textStatus, error){
-            var errorMessage = 'Error connecting to the LanguageTool server.';
-            alert(errorMessage);
-            console.log(errorMessage);
-        }
-    });
 }
 
 function setTestText(){
@@ -413,17 +366,23 @@ function setTestText(){
     });
 }
 
+$( "#webSocketBroadcast" ).click(function(){
+	socket.send("thisisatest");
+});
+
 function initialiseDocument(){
     setTestText();
     
     $( [ $("#ruleTestPopOver"),
     		$("#ruleCompetencePopOver"),
     		$("#falsePositivesPopOver"),
+    		$("#wordContextPopOver"),
     		$("#processingTimePopOver") ] )
     		.each( function(){ $(this).popover(); } ); 
     
     $( [ $("#ruleCompetenceOption"),
     		$("#falsePositivesOption"),
+    		$("#wordContextOption"),
     		$("#processingTimeOption" ) ] )
     		.each( function(){ $(this).hide(); } );
 }
@@ -433,12 +392,73 @@ function hideAllOptions(){
     $( [ $("#ruleTestPopOver"),
     		$("#ruleCompetencePopOver"),
     		$("#falsePositivesPopOver"),
+    		$("#wordContextPopOver"),
     		$("#processingTimePopOver") ] )
     		.each( function(){ $(this).popover('hide'); } );
     
     $( [ $("#testRuleOption"),
     		$("#ruleCompetenceOption"),
     		$("#falsePositivesOption"),
+    		$("#wordContextOption"),
     		$("#processingTimeOption") ] )
     		.each( function(){ $(this).hide(); } );
 }
+
+function setupWebSocket(){
+	var socket = new WebSocket("ws://localhost:6819/update/");
+    
+	socket.onopen = function(){
+		console.log("connected"); 
+	};
+	
+	socket.onmessage = function (message){
+		console.log(message.data);
+	};
+	
+	socket.onclose = function(){
+		console.log("disconnected"); 
+	};
+}
+
+function doAjaxRequest(type, url, data, successFunction){
+    $.ajax({
+        type: type,
+        dataType: 'text',
+        url: url,
+        data: data,
+        success: successFunction,
+        error: function(xhr, textStatus, error){
+            var errorMessage = 'Error connecting to the LanguageTool server.';
+            alert(errorMessage);
+            console.log(errorMessage);
+        }
+    });
+}
+
+$( document ).ready(function() {
+    
+    initialiseDocument();
+    
+    $( "#testOption" ).change(function(){       
+        hideAllOptions(); 
+        switch( parseInt($( "#testOption option:selected" ).val()) ){
+	        case 0:	$( "#testRuleOption" 		).show(); 	break;
+	        case 1: $( "#ruleCompetenceOption" 	).show(); 	break;
+	        case 2: $( "#falsePositivesOption" 	).show(); 	break;
+	        case 3: $( "#processingTimeOption" 	).show(); 	break;
+	        case 4: $( "#wordContextOption" 	).show(); 	break;
+        } 
+    });
+    
+    $( "#btnSubmitPost" 		).click( doTextCheck 			);
+    $( "#btnAddWord" 			).click( addWordToDictionary 	);
+    $( "#btnSearchWord" 		).click( searchWordInDictionary );
+    $( "#btnGetInflections" 	).click( getWordInflections 	);
+    $( "#btnBuildDictionary" 	).click( buildDictionary 		);
+    $( "#btnTestRule" 			).click( runRuleTest 			);
+    $( "#btnRuleCompetence" 	).click( runRuleCompetenceTest 	);
+    $( "#btnFalsePositives" 	).click( runFalsePositivesTest 	);
+    $( "#btnProcessingTime" 	).click( runProcessingTimeTest	);
+    $( "#btnWordContext"	 	).click( getWordContext			);
+    
+});
