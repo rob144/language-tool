@@ -113,7 +113,7 @@
             <rule>
                 <pattern>
                     <token postag="SENT_START"/>
-                    <token regexp="yes">why</token>
+                    <token>why</token>
                     <token skip="-1"><exception postag="PRP"/></token>
                     <marker>
                         <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
@@ -121,13 +121,13 @@
                 </pattern>
                 <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
                 <short>Missing question mark.</short>
-                <example type="correct">Who is that?</example>
-                <example type="incorrect">Who is that<marker>.</marker></example>
+                <example type="correct">Why is that?</example>
+                <example type="incorrect">Why is that<marker>.</marker></example>
             </rule>
             <rule>
 	            <pattern>
 	                <token postag="SENT_START"/>
-	                <token regexp="yes">where</token>
+	                <token>where</token>
 	                <token skip="-1"><exception postag_regexp="yes" postag="EX|NN.*|DT|JJ|TO"/></token>
 	                <marker>
 	                    <token postag="SENT_END" negate="yes">?<exception scope="previous">?</exception></token>
@@ -135,8 +135,8 @@
 	            </pattern>
 	            <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
 	            <short>Missing question mark.</short>
-	            <example type="correct">Who is that?</example>
-	            <example type="incorrect">Who is that<marker>.</marker></example>
+	            <example type="correct">Where is that?</example>
+	            <example type="incorrect">Where is that<marker>.</marker></example>
 	        </rule>
             <rule>
             	<pattern>
@@ -150,10 +150,8 @@
                 </pattern>
                 <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
                 <short>Missing question mark.</short>
-                <example type="correct">What is the issue?</example>
-                <example type="correct">What if I told you, there is no spoon?</example>
-                <example type="incorrect">What is the issue<marker>.</marker></example>
-                <example type="incorrect">What if I told you, there is no spoon<marker>.</marker></example>
+                <example type="correct">What have you done?</example>
+                <example type="incorrect">What have you done<marker>.</marker></example>
             </rule>
             <rule>
                 <pattern>
@@ -169,9 +167,7 @@
                 </pattern>
                 <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
                 <short>Missing question mark.</short>
-                <example type="correct">What is the issue?</example>
                 <example type="correct">What if I told you, there is no spoon?</example>
-                <example type="incorrect">What is the issue<marker>.</marker></example>
                 <example type="incorrect">What if I told you, there is no spoon<marker>.</marker></example>
             </rule>
             <rule>
@@ -185,8 +181,8 @@
 	            </pattern>
 	            <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
 	            <short>Missing question mark.</short>
-	            <example type="correct">Who is that?</example>
-	            <example type="incorrect">Who is that<marker>.</marker></example>
+	            <example type="correct">When is that?</example>
+	            <example type="incorrect">When is that<marker>.</marker></example>
 	        </rule>
 	        <rule>
 	            <pattern>
@@ -199,8 +195,8 @@
 	            </pattern>
 	            <message>Sentences starting with a WH-adverb are interrogative constructions and should be marked at the end with a question mark.</message>
 	            <short>Missing question mark.</short>
-	            <example type="correct">Who is that?</example>
-	            <example type="incorrect">Who is that<marker>.</marker></example>
+	            <example type="correct">How is that?</example>
+	            <example type="incorrect">How is that<marker>.</marker></example>
 	        </rule>
         </rulegroup>
         <rule id="IP_US_COUNTRY_ACRONYM" name="Capitalize US country acronym.">
@@ -321,9 +317,9 @@
             <example type="correct">This is my old car.</example>
             <example type="correct">You forced our action here.</example>
             <example type="incorrect">This old car is <marker>my</marker>.</example>
-        </rule> 
-        <rulegroup id="IP_INCORRECT_USE_OF_TO_TOO_AND_TWO" name="Incorrect use of 'to', 'too' and 'two'">
-	        <rule>
+        </rule>
+        <rulegroup id="IP_INCORRECT_TO" name="Incorrect use of 'to'">
+        	<rule>
         		<pattern>
         			<token postag="EX"/>
         			<token postag_regexp="yes" postag="VB.*"/>
@@ -338,6 +334,20 @@
                 <example type="incorrect">There were <marker>to</marker> main theories.</example>
         	</rule>
         	<rule>
+        		<antipattern>
+        			<token chunk="E-NP-singular" skip="-1"/>
+        			<token>to</token>
+        			<token min="0" postag_regexp="yes" postag="JJ.*"/>
+                    <token postag_regexp="yes" postag="NN.*"/>
+                    <token postag_regexp="yes" postag="VB.*"/>
+        		</antipattern>
+        		<antipattern>
+        			<token chunk="E-NP-plural" skip="-1"/>
+        			<token>to</token>
+        			<token min="0" postag_regexp="yes" postag="JJ.*"/>
+                    <token postag_regexp="yes" postag="NN.*"/>
+                    <token postag_regexp="yes" postag="VB.*"/>
+        		</antipattern>
         		<pattern>
                     <marker>
                     	<token>to</token>
@@ -349,19 +359,70 @@
                 <message>Incorrect use of 'to', reconsider phrasing.</message>
                 <short>Incorrect use of 'to'.</short>
                 <example type="correct">Two potatoes were thrown.</example>
+                <example type="correct">The person you are trying to contact is not available.</example>
+                <example type="correct">The students going abroad to study is increasing each year.</example>
                 <example type="incorrect"><marker>To</marker> helpful potatoes were thrown.</example>
+        	</rule>
+        </rulegroup>
+        <rulegroup id="IP_INCORRECT_TWO" name="Incorrect use of 'two'">
+        	<rule>
+        		<pattern>
+        			<marker>
+        				<token>two</token>
+        			</marker>
+        			<token postag="JJ"/>
+        			<token><exception postag_regexp="yes" postag="NN.*"/></token>
+        		</pattern>
+        		<message>Incorrect use of 'two', did you mean 'too'?</message>
+                <short>Incorrect use of 'two'.</short>
+                <example type="correct">Going too fast.</example>
+                <example type="incorrect">Going <marker>two</marker> fast.</example>
         	</rule>
         	<rule>
         		<pattern>
-                    <marker>
-                    	<token>to<exception scope="previous" postag_regexp="yes" postag="VB.*"/></token>
-                    </marker>
-                    <token postag="SENT_END"/>
-                </pattern>
-                <message>Incorrect use of 'to', reconsider phrasing.</message>
-                <short>Incorrect use of 'to'.</short>
+        			<token postag_regexp="yes" postag="VB.*"/>
+        			<marker>
+        				<token>two</token>
+        			</marker>
+        			<token postag="JJ"/>
+        			<token><exception postag_regexp="yes" postag="NN.*"/></token>
+        		</pattern>
+        		<message>Incorrect use of 'two', did you mean 'too'?</message>
+                <short>Incorrect use of 'two'.</short>
+                <example type="correct">Going to fast.</example>
+                <example type="incorrect">Going <marker>two</marker> fast.</example>
         	</rule>
-            <rule>
+        	<rule>
+        		<pattern>
+        			<token postag_regexp="yes" postag="VB.*"/>
+        			<marker>
+        				<token>two</token>
+        			</marker>
+        			<token postag_regexp="yes" postag="VB.*"/>
+        		</pattern>
+        		<message>Incorrect use of 'two', did you mean 'to'?</message>
+                <short>Incorrect use of 'two'.</short>
+                <example type="correct">I'm going to fast next week.</example>
+                <example type="incorrect">I'm going <marker>two</marker> fast next week.</example>
+        	</rule>
+        </rulegroup>
+        <rulegroup id="IP_INCORRECT_TOO" name="Incorrect use of 'too'">
+        	<rule>
+        		<pattern>
+        			<marker>
+        				<token>too</token>
+        			</marker>
+        			<token postag_regexp="yes" postag="JJ.*"><exception postag="DT"/></token>
+        			<token postag_regexp="yes" postag="NN.*"><exception postag_regexp="yes" postag="VB.*"/></token>
+        		</pattern>
+        		<message></message>
+        		<short></short>
+        		<example type="correct">There were two main theories.</example>
+        		<example type="correct">There were too many things to do.</example>
+        		<example type="correct">They are too busy fighting.</example>
+        		<example type="incorrect">There were <marker>too</marker> main theories.</example>
+        	</rule>
+        	<rule>
                 <pattern>
                     <or>
                         <token postag_regexp="yes" negate_pos="yes" postag="NN|NNS|NN:U|NN:UN|NP|NNP|PRP\$|CC"/>
@@ -768,54 +829,41 @@
                 <example type="incorrect">They brought <marker>they're</marker> lunch.</example>
             </rule>
         </rulegroup>
-<!--         <rulegroup id="IP_VERB_CONJUGATION_ERROR" name="Verb conjugation errors">
-            <rule>
-                <antipattern>
-                    <token postag="MD"/>
-                    <token>'</token>
-                    <token>t</token>
-                    <token regexp="yes">i|we</token>
-                </antipattern>
-                <pattern>
-                    <token regexp="yes">i|we<exception scope="previous" postag="MD"/></token>
-                    <marker>
-                        <token postag_regexp="yes" postag="VBG|VBN|VBZ">be<exception postag_regexp="yes" postag="VBD|VBP"/></token>
-                    </marker>
-                </pattern>
-                <message>Verb object should match subject, conjugation error.</message>
-                <short>Verb conjugation error.</short>
-                <example type="correct">I am here.</example>
-                <example type="correct">We ate here.</example>
-                <example type="correct">We have arrived.</example>
-                <example type="incorrect">I <marker>be</marker> here.</example>
-                <example type="incorrect">We <marker>eating</marker> here.</example>
-                <example type="incorrect">We <marker>eaten</marker> here.</example>
-                <example type="incorrect">We <marker>eats</marker> here.</example>
-                <example type="correct">Shouldn't I be here?</example>
-                <example type="correct">Should I be here?</example>
-            </rule>
-            <rule>
-                <pattern>
-                </pattern>
-            <message>Verb object should match subject, conjugation error.</message>
-            <short>Verb conjugation error.</short>
-            </rule>
-            <rule>
-                <pattern>
-                    <token postag="MD"/>
-                    <token min="0">'</token>
-                    <token min="0">t</token>
-                    <token regexp="yes">i|you|he|she|it|one|we|they</token>
-                    <marker>
-                        <token postag_regexp="yes" postag="VBD|VBG|VBN|VBP|VBZ"><exception postag="VB"/></token>
-                    </marker>
-                </pattern>
-                <message>Verb object should match subject, conjugation error.</message>
-                <short>Verb conjugation error.</short>
-                <example type="correct">Couldn't I be here?</example>
-                <example type="correct">Couldn't I have this?</example>
-                <example type="correct">Couldn't she jump over?</example>
-            </rule>
-        </rulegroup> -->
+        <rulegroup id="IP_PRESENT_PERFECT_CONTINUOUS" name="Present perfect continuous errors.">
+        	<rule>
+        		<pattern>
+        			<token>have</token>
+        			<token>been</token>
+        			<marker>
+        				<token postag_regexp="yes" postag="VB|VBP|VBZ|VBD"><exception postag_regexp="yes" postag="VBG|VBN"/></token>
+        			</marker>
+        		</pattern>
+        		<message>Participle must match tense.</message>
+        		<short>Participle must match tense.</short>
+        		<example type="correct">I have been beaten to the punch.</example>
+        		<example type="correct">They have been eaten by wolves.</example>
+        		<example type="incorrect">They have been <marker>eat</marker> for hours now.</example>
+                <example type="incorrect">They have been <marker>ate</marker> for hours now.</example>
+                <example type="incorrect">They have been <marker>eats</marker> for hours now.</example>
+        	</rule>
+        	<rule>
+        		<pattern>
+        			<token>has</token>
+        			<token>been</token>
+        			<marker>
+        				<token postag_regexp="yes" postag="VB|VBP|VBZ|VBD"><exception postag_regexp="yes" postag="VBG|VBN"/></token>
+        			</marker>
+        		</pattern>
+        		<message>Participle must match tense.</message>
+                <short>Participle must match tense.</short>
+                <example type="correct">The number of Japanese students returning after life abroad has been increasing as of late.</example>
+                <example type="correct">Nothing great has been achieved by playing it safe.</example>
+                <example type="correct">He has been eaten by wolves.</example>
+                <example type="correct">He has been eating for hours now.</example>
+                <example type="incorrect">He has been <marker>eat</marker> for hours now.</example>
+                <example type="incorrect">He has been <marker>ate</marker> for hours now.</example>
+                <example type="incorrect">He has been <marker>eats</marker> for hours now.</example>
+        	</rule>
+        </rulegroup>
     </category>
 </rules>

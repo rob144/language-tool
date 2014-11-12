@@ -315,7 +315,7 @@ function getWordContext(){
 function runRuleCompetenceTest(){
     doAjaxRequest('GET', '/test', {test : "rule_competence"},
         function(response){
-            $('#ruleCompeteneResult').html(response);
+            $('#ruleCompetenceResult').text(response);
         }
     )
 }
