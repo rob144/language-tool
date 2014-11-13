@@ -1,33 +1,49 @@
 package com.iparadigms.ipgrammar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 public class SocketLogicBridge {
 	
+	private static RuleTestServlet _logic;
+	
+	private static LinkedList<String> _status = new LinkedList<String>();
+	private static LinkedList<UpdateSocket> _socketStatus = new LinkedList<UpdateSocket>();
+	
 	private static LinkedList<String> _request = new LinkedList<String>();
-	private static LinkedList<UpdateSocket> _connections = new LinkedList<UpdateSocket>();
+	private static LinkedList<UpdateSocket> _waitingSocket = new LinkedList<UpdateSocket>();
 	
-	public SocketLogicBridge () {
+	public SocketLogicBridge () {}
+	
+	public static void request(UpdateSocket socket, String request){
+		try {
+			_logic.poll(socket, request);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void setStatus(UpdateSocket socket, String status){
+		_socketStatus.add(socket);
+		_status.add(status);
+	}
+	
+	public static String getStatus(UpdateSocket socket){
+		return _status.get(_socketStatus.indexOf(socket));
+	}
+	
+	public static void removeStatus(UpdateSocket socket, String status){
+		int socketIndex = _socketStatus.indexOf(socket);
+		int statusIndex = _status.indexOf(status);
 		
+		if (socketIndex == statusIndex) {
+			_socketStatus.remove(socket);
+			_status.remove(status);
+		}
 	}
 	
-	public static void storeRequest(UpdateSocket socket, String request){
-		_connections.add(socket);
-		_request.add(request);
-	}
-	
-	//getStatus
-	
-	//removeStatus
-	
-	//public static UpdateSocket getSocket
-	
-	//public static String getRequest
-	
-	public static boolean requestWaiting(){
-		return !_request.isEmpty();
+	public static void inform (RuleTestServlet logic) throws IOException {
+		_logic = logic;
 	}
 }

@@ -31,8 +31,6 @@ import com.iparadigms.ipgrammar.VerbConjugationRule;
 @SuppressWarnings("serial")
 public class RuleTestServlet extends WebSocketServlet{
     
-	private static ArrayList<UpdateSocket> _connections = new ArrayList<UpdateSocket>();
-	
     private final int CONTEXT_SIZE = 80; // characters
     private final Logger LOG = Logger.getLogger(RuleTestServlet.class.getName());
     
@@ -70,6 +68,8 @@ public class RuleTestServlet extends WebSocketServlet{
         //Load/extract corpus
         _engCorpus = new CorpusTextHolder ("eng");
         _engCorpus.getLinesToString(1000);
+        
+        SocketLogicBridge.inform(this);
     }
     
     private String testIPRules(String ruleId, int lineStart, int lineLimit) throws IOException {
@@ -275,49 +275,40 @@ writeLog("LOOP NUMBER : " + x);
         return result;
     }
     
-    public static void doRequest (UpdateSocket socket, String message) {
+    public void poll(UpdateSocket socket, String request) throws IOException {
     	
-    	String test = message.split(":")[0];
+    	System.out.println(request);
+    	
+    	String[] test = request.split(";");
+    	
     	String output = "";
     	
-    	if (test.equals("test_rule")) {
-    		String[] parameters = message.split(";")[1].split(".");
+    	if (test[0].equals("test_rule")) {
+    		String[] parameters = test[1].split("\\.");
             output = testIPRules(parameters[0],
                 Integer.parseInt(parameters[1]),
                 Integer.parseInt(parameters[2]));
     	}
-        
-        if (test.equals("rule_competence"))
+        if (test[0].equals("rule_competence"))
             output = testRuleCompetence();
-        
-        if (test.equals("false_positives"))
+        if (test[0].equals("false_positives"))
             output = ipRulesFalsePositive();
-        
-        if (test.equals("processing_time"))
+        if (test[0].equals("processing_time"))
             output = testRulesProcessTime();
-        
-        if (test.equals("context")) {
-        	String[] parameters = message.split(";")[1].split(".");
+        if (test[0].equals("context")) {
+        	String[] parameters = test[1].split("\\.");
         	output = findWordContext(parameters[0],
         			Integer.parseInt(parameters[1]),
         			Integer.parseInt(parameters[2]));
         }
         
-        socket.sendMessage(output);
+        SocketLogicBridge.setStatus(socket, output);
     }
     
     @Override
     public void configure(WebSocketServletFactory factory) {
-        factory.getPolicy().setIdleTimeout(10000);
+        factory.getPolicy().setIdleTimeout(100000);
         factory.register(UpdateSocket.class);
-    }
-    
-    public static void addActiveSocket (UpdateSocket socket) throws IOException {
-    	_connections.add(socket);
-    }
-    
-    public static void removeActiveSocket (UpdateSocket socket) throws IOException {
-    	_connections.remove(socket);
     }
     
     private void disableAllActiveRules () {

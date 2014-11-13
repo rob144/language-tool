@@ -17,7 +17,15 @@ public class UpdateSocket extends WebSocketAdapter
     public void onWebSocketText(String message){
         super.onWebSocketText(message);
         System.out.println("Received TEXT message: " + message);
-        RuleTestServlet.doRequest(this, message);
+        
+        if (message.split(":")[0].equals("get_status"))
+        	SocketLogicBridge.getStatus(this);
+        
+        if (message.split(":")[0].equals("request"))
+        	SocketLogicBridge.request(this, message.split(":")[1]);
+        
+        if (message.split(":")[0].equals("remove_self"))
+			SocketLogicBridge.removeStatus(this, message.split(":")[1]);
     }
     
     @Override

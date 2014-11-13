@@ -1,6 +1,20 @@
 var MAX_PAGE_LINES = 50;
 var CURRENT_PAGE = 1; 
 
+var testSocket = new WebSocket("ws://localhost:6819/test/");
+
+testSocket.onopen = function(){
+	console.log("connected"); 
+};
+
+testSocket.onmessage = function (message){
+	console.log(message.data);
+};
+
+testSocket.onclose = function(){
+	console.log("disconnected"); 
+};
+
 /* ********************************************************* */
 /* DATA class : variables and methods for handling the input
  * text, parsing error data and adding markup
@@ -292,12 +306,13 @@ function buildDictionary(){
 }
 
 function runRuleTest(){
-    doAjaxRequest('GET', '/test',
+	testSocket.send("request:test_rule;###.0.1000");
+    /*doAjaxRequest('GET', '/test',
     {test : "test_rule", rule_id : $( "#ruleTestId" ).val(), line_start : $( "#ruleTestLineStart" ).val(), line_limit : $( "#ruleTestLineEnd" ).val()},
         function(response){
             new Transformation().setXml(response).setXslt("test_errors.xsl").transform("ruleTestResult");
         }
-    )
+    )*/
 }
 
 function getWordContext(){
@@ -321,7 +336,8 @@ function runRuleCompetenceTest(){
 }
 
 function runFalsePositivesTest(){
-	$("#loadingDiv").show();
+	testSocket.send("request:false_positives");
+	/*$("#loadingDiv").show();
     doAjaxRequest('GET', '/test', {test : "false_positives"},
         function(response){
             var entries = response.split(":");
@@ -333,12 +349,7 @@ function runFalsePositivesTest(){
             $("#loadingDiv").fadeOut(500);
             $('#falsePositiveResult').html(html);
         }
-    )
-}
-
-function example(){
-	setupTestWebSocket();
-	testSocket.sendMessageTest("nothing");
+    )*/
 }
 
 function runProcessingTimeTest(){
@@ -370,10 +381,6 @@ function setTestText(){
         }
     });
 }
-
-$( "#webSocketBroadcast" ).click(function(){
-	socket.send("thisisatest");
-});
 
 function initialiseDocument(){
     setTestText();
@@ -407,26 +414,6 @@ function hideAllOptions(){
     		$("#wordContextOption"),
     		$("#processingTimeOption") ] )
     		.each( function(){ $(this).hide(); } );
-}
-
-function sendMessageTest(message){
-	socket.send(message);
-}
-
-function setupTestWebSocket(){
-	var testSocket = new WebSocket("ws://localhost:6819/test/");
-    
-	socket.onopen = function(){
-		console.log("connected"); 
-	};
-	
-	socket.onmessage = function (message){
-		console.log(message.data);
-	};
-	
-	socket.onclose = function(){
-		console.log("disconnected"); 
-	};
 }
 
 function doAjaxRequest(type, url, data, successFunction){
@@ -469,5 +456,4 @@ $( document ).ready(function() {
     $( "#btnFalsePositives" 	).click( runFalsePositivesTest 	);
     $( "#btnProcessingTime" 	).click( runProcessingTimeTest	);
     $( "#btnWordContext"	 	).click( getWordContext			);
-    
 });
