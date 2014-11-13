@@ -34,5 +34,6 @@
 	<classpathentry kind="lib" path="grammar-webapp/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="grammar-webapp/lib/tika-core.jar"/>
 	<classpathentry kind="lib" path="grammar-webapp/lib/javax.json-1.0.4.jar"/>
+	<classpathentry kind="lib" path="grammar-webapp/lib/gson-2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

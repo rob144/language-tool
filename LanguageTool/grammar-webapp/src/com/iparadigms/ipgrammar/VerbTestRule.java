@@ -30,7 +30,8 @@ public class VerbTestRule extends EnglishRule {
     
     private final Logger LOG = Logger.getLogger(VerbTestRule.class.getName());
 
-    public VerbTestRule() throws java.io.IOException {
+    //Constructor
+    public VerbTestRule(String token) throws java.io.IOException {
         /*if (messages != null) {
             super.setCategory(new Category(messages.getString("category_misc")));
         }
