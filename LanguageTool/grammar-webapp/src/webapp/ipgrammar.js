@@ -10,108 +10,6 @@ var DATA = {
     xmlErrors:          '',
     arrLineObjs:        [],
     arrMarkedLines:     ['Run check first.'],
-    processErrorXml:
-        function( errorsXml ){
-            this.xmlErrors = errorsXml;
-            this.xmlErrors.each( function(index){ $(this).attr('ref', index); } );
-            this.arrMarkedLines = this.getMarkupLines(); 
-            /* Each element in arrayLineObjs contains an array of objects
-            * Each one of the those objects contains the character and
-            * an array of any error ids which fall at that character position. 
-            * */
-            this.arrLineObjs = this.buildTextData(this.plainText);
-        },
-    getMarkupForLine:   
-        function( arrChars, lineNumber ) {
-            var lineMarkup = "";
-            for(var charNum = 0; charNum < arrChars.length; charNum++ ){
-                lineMarkup += "<a id='" + lineNumber + "_" + charNum + "'>" + arrChars[charNum] + "</a>";
-            }
-            return lineMarkup;
-        },
-    getMarkupLines:
-        function() {
-            //Return an arry containing the HTML line strings
-            var arrLines = this.plainText.split(/(?:\r\n|\r|\n)/);
-            var arrayHtmlLines = [];
-            if(arrLines.length >= 1){
-                for (var i = 0; i < arrLines.length; i++) { 
-                    if((arrLines[i].trim() + "" ) == ""){
-                        arrayHtmlLines.push("<br/>");
-                    } else {
-                        arrayHtmlLines.push("<p class='line'>" 
-                        + this.getMarkupForLine( arrLines[i], i ) + "</p>");
-                    }
-                }
-            }
-            return arrayHtmlLines;
-        },
-    buildTextData:
-        function ( plainText ){
-            
-            var arrLines = plainText.split(/(?:\r\n|\r|\n)/);
-            var arrLinesObjs = [];
-
-            for (var lineNum = 0; lineNum < arrLines.length; lineNum++ ){
-                
-                var arrChars = arrLines[lineNum].split("");
-                var arrCharObjs = [];
-
-                for(var charNum = 0; charNum < arrChars.length; charNum++){
-                    
-                    var objChar = { 
-                        char: arrChars[charNum],
-                        errors: this.getErrorsAtPosition(lineNum, charNum),
-                        getErrorIds:
-                            function(){  
-                                var errorIdsString = '';
-                                for(var k = 0; k < this.errors.length; k++){
-                                    if(k >= 1) errorIdsString += ':';
-                                    errorIdsString += this.errors[k].ref;
-                                }
-                                return errorIdsString;
-                            },
-                        message: ''
-                    };
-                    for (var i = 0; i < objChar.errors.length; i++){
-                        if(i == 0) objChar.message = '<ul>';
-                        if(i >= 1) objChar.message += '<br/>';
-                        objChar.message += '<li>' + objChar.errors[i].message + '</li>';
-                        if(i == objChar.errors.length - 1) objChar.message += '</ul>';
-                    }
-                    arrCharObjs.push( objChar );
-                }
-                arrLinesObjs.push( arrCharObjs );
-            }
-
-            return arrLinesObjs;
-        },
-    getErrorsAtPosition:
-        function ( lineNum, charNum ){
-            var errors = [];
-            //Search the error xmlObj for any errors at this position.
-
-            this.xmlErrors.filter("[fromy='" + lineNum  + "']").each(
-                function(){
-                    //Check if the x values overlap
-                    var x1 = parseInt($($(this).get(0)).attr('fromx'));
-                    var x2 = parseInt($($(this).get(0)).attr('tox')) - 1;
-                    if(x1 <= charNum && x2 >= charNum){
-                        var e = $($(this).get(0));
-                        var objError = { 
-                            ref:        $(e).attr('ref'),
-                            fromy:      parseInt( $(e).attr('fromy') ),
-                            toy:        parseInt( $(e).attr('toy') ),
-                            fromx:      parseInt( $(e).attr('fromx') ),
-                            tox:        parseInt( $(e).attr('tox') ) - 1,
-                            message:    $(e).attr('msg')
-                        }  
-                        errors.push( objError );
-                    }
-                }
-            );
-            return errors;
-        },
     getTotalPages:
         function (){
             return Math.ceil(this.arrMarkedLines.length / MAX_PAGE_LINES);
@@ -136,7 +34,7 @@ function clearText(){
 
 function showTab(viewId, text){
 
-console.log('text: ' + text);
+//console.log('text: ' + text);
 	
     $('#tabs a[href="#'+ viewId +'"]').tab('show');
     
@@ -147,7 +45,7 @@ console.log('text: ' + text);
         }else{
             if(DATA.getTotalPages() >= 1){
                 $('#textMarked').html(text);
-                addHighlighting( DATA.xmlErrors );
+                addHighlighting();
                 $('#pageXofY').text('Page ' + CURRENT_PAGE + ' of ' + DATA.getTotalPages());
                 $('#pageXofY').css('display','inline');
                 $('#pagination').css('display','block');
@@ -158,29 +56,31 @@ console.log('text: ' + text);
     }
 }
 
-function getErrorAttribute(errorRefId, attributeName){
-    return $(XML_ERRORS).find('error[ref="' + errorRefId  + '"]').attr(attributeName);     
-}
-
-function addHighlighting( arrXmlErrors ){
+function addHighlighting(){
 
     //Loop through the char objects and add one mousemove event per character
-    for(var i = 0; i < DATA.arrLineObjs.length; i++){    
+    for(var i = 0; i < DATA.arrLineObjs.length; i++){   
+    	
+    	//console.log("LINE: " + DATA.arrLineObjs[i].toString());
+    	
         for(var j = 0; j < DATA.arrLineObjs[i].length; j++){
-          
+  
            //For each character grab the error ids, fetch the messages for those errors. 
            var c = DATA.arrLineObjs[i][j];
+           
+           //console.log("LINE CHAR: " + i + " " + c.errors + " " + c.messages);
+           
            if(c.errors.length >= 1){
-                
+
                 var elem_id = '#' + i + '_' + j;
                 $(elem_id).addClass('error-highlight');
-                var tooltip = $("<div id='tip_" + i + "_" + j + "' data-error-ids='" + c.getErrorIds()  
-                                    + "' class='tip'>" + c.message + "</div>");
+                var tooltip = $("<div id='tip_" + i + "_" + j + "' data-error-ids='" + c.errorIds.toString()  
+                                    + "' class='tip'>" + c.messages + "</div>");
                 tooltip.css('display','none');
                 tooltip.css('position','absolute');
                 tooltip.appendTo($("#textMarked"));
 
-                $(elem_id).mousemove( { err_id: i + "_" + j, thisErrorIds: c.getErrorIds()  } , function(event) { 
+                $(elem_id).mousemove( { err_id: i + "_" + j, thisErrorIds: c.errorIds.toString()  } , function(event) { 
 
                     var thisTipId = 'tip_' + event.data.err_id; 
                     var thisTip = '#' + thisTipId;
@@ -224,15 +124,19 @@ function doTextCheck(){
     DATA.plainText = $( "#inputText" ).val();
     $("#loadingDiv").show();
     doAjaxRequest('POST', '/' + getLanguageCode() + '/checktext', 'text=' + encodeURIComponent( DATA.plainText ),
-        function(xml){
-            /* remove the <? xml version ... ?> tag */
-            xml = xml.substr(xml.indexOf('?>')+2);  
-            var $xmlObj = $( $.parseXML('<root>'+ xml +'</root>') );
-            var xmlString = $xmlObj.find('root').html().trim();
-            
-            DATA.processErrorXml( $xmlObj.find('error') );
+        function(response){
+            /* 
             new Transformation().setXml(xmlString).setXslt("grammar_errors.xsl").transform("xslOutput");
-            showTab( 'markupTab', DATA.getPageText(1) );
+            */
+    		var json = JSON.parse(response);
+    		DATA.arrMarkedLines = json.htmlLines;
+    		
+for(var i =0; i< json.htmlLines.length; i++){
+	console.log("LINE: " + json.htmlLines[i]);
+}
+    		
+    		DATA.arrLineObjs = json.textData;
+    		showTab( 'markupTab', DATA.getPageText(1) );
         }
     );
 }
