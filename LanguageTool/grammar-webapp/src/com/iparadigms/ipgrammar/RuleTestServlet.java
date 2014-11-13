@@ -7,6 +7,8 @@ import java.lang.AssertionError;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.languagetool.AnalyzedSentence;
 import org.languagetool.AnalyzedTokenReadings;
 import org.languagetool.JLanguageTool;
@@ -27,8 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.iparadigms.ipgrammar.VerbConjugationRule;
 
 @SuppressWarnings("serial")
-public class RuleTestServlet extends HttpServlet{
+public class RuleTestServlet extends WebSocketServlet{
     
+	private static ArrayList<UpdateSocket> _connections = new ArrayList<UpdateSocket>();
+	
     private final int CONTEXT_SIZE = 80; // characters
     private final Logger LOG = Logger.getLogger(RuleTestServlet.class.getName());
     
@@ -271,7 +275,52 @@ writeLog("LOOP NUMBER : " + x);
         return result;
     }
     
-    public void disableAllActiveRules () {
+    public static void doRequest (UpdateSocket socket, String message) {
+    	
+    	String test = message.split(":")[0];
+    	String output = "";
+    	
+    	if (test.equals("test_rule")) {
+    		String[] parameters = message.split(";")[1].split(".");
+            output = testIPRules(parameters[0],
+                Integer.parseInt(parameters[1]),
+                Integer.parseInt(parameters[2]));
+    	}
+        
+        if (test.equals("rule_competence"))
+            output = testRuleCompetence();
+        
+        if (test.equals("false_positives"))
+            output = ipRulesFalsePositive();
+        
+        if (test.equals("processing_time"))
+            output = testRulesProcessTime();
+        
+        if (test.equals("context")) {
+        	String[] parameters = message.split(";")[1].split(".");
+        	output = findWordContext(parameters[0],
+        			Integer.parseInt(parameters[1]),
+        			Integer.parseInt(parameters[2]));
+        }
+        
+        socket.sendMessage(output);
+    }
+    
+    @Override
+    public void configure(WebSocketServletFactory factory) {
+        factory.getPolicy().setIdleTimeout(10000);
+        factory.register(UpdateSocket.class);
+    }
+    
+    public static void addActiveSocket (UpdateSocket socket) throws IOException {
+    	_connections.add(socket);
+    }
+    
+    public static void removeActiveSocket (UpdateSocket socket) throws IOException {
+    	_connections.remove(socket);
+    }
+    
+    private void disableAllActiveRules () {
         List<Rule> myRules = _langTool.getAllActiveRules();
         List<String> myRuleIds = new ArrayList<String>();
         
@@ -279,36 +328,6 @@ writeLog("LOOP NUMBER : " + x);
             myRuleIds.add(r.getId());        
             
         _langTool.disableRules(myRuleIds);
-    }
-    
-    @Override
-    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-        
-writeLog("RUNNING TEST : " + req.getParameter("test"));
-
-        String output = null;
-        
-        if (req.getParameter("test").equals("test_rule"))
-            output = testIPRules(req.getParameter("rule_id"),
-                Integer.parseInt(req.getParameter("line_start")),
-                Integer.parseInt(req.getParameter("line_limit")));
-        
-        if (req.getParameter("test").equals("rule_competence"))
-            output = testRuleCompetence();
-        
-        if (req.getParameter("test").equals("false_positives"))
-            output = ipRulesFalsePositive();
-        
-        if (req.getParameter("test").equals("processing_time"))
-            output = testRulesProcessTime();
-        
-        if (req.getParameter("test").equals("context"))
-        	output = findWordContext(req.getParameter("word"),
-        			Integer.parseInt(req.getParameter("line_start")),
-        			Integer.parseInt(req.getParameter("line_limit")));
-        
-writeLog("RETURNING TEST OUTPUT");
-        resp.getWriter().print(output);
     }
     
     private void writeLog(String text){

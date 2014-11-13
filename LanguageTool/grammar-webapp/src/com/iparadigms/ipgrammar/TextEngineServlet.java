@@ -2,12 +2,12 @@ package com.iparadigms.ipgrammar;
 
 import java.util.List;
 import java.io.IOException;
-
 import org.languagetool.JLanguageTool;
 import org.languagetool.Language;
 import org.languagetool.rules.RuleMatch;
 import org.languagetool.rules.patterns.PatternRuleLoader;
 import org.languagetool.rules.patterns.PatternRule;
+import org.languagetool.tools.RuleAsXmlSerializer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +49,7 @@ LOG.log(Level.INFO, "ADDING RULES.");
     
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+LOG.log(Level.INFO, "***Post Servlet****");
         
         String results = "";
         String text = req.getParameter("text");
@@ -67,13 +68,14 @@ LOG.log(Level.INFO, "ADDING RULES.");
     public String doCheck(String text) throws IOException, InstantiationException, IllegalAccessException
     {   
         List<RuleMatch> matches = _langTool.check(text);
-        TextCheckResponse response = new TextCheckResponse(text, matches, _lang);
-
-//System.out.println("RESPONSE TO XML: " + response.getXmlResponse());
-//System.out.println("RESPONSE TO JSON: " + response.getJsonResponse());
-
-        return response.getJsonResponse();
+        //TODO: add markup to plain text i.e. <br> and <p> tags for lines
+        String[] strArrLines = text.split("(?:\r\n|\r|\n)");
+System.out.println("text lines: " + strArrLines.length);
+LOG.log(Level.INFO, "Number of matches: {0}", matches.size() );
+        final RuleAsXmlSerializer serializer = new RuleAsXmlSerializer();
+        //Do we need to send XML?
+        //TODO: build the line and char objects to contain error ids and messages
+        final String xmlResponse = serializer.ruleMatchesToXml(matches, text, CONTEXT_SIZE, _lang);
+        return xmlResponse;
     }
-    
-    
 }
