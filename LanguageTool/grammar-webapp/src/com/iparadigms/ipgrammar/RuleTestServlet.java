@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
 import java.lang.AssertionError;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
@@ -21,18 +19,12 @@ import org.languagetool.rules.patterns.PatternRule;
 import org.languagetool.rules.patterns.PatternRuleTest;
 import org.languagetool.tools.RuleAsXmlSerializer;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.iparadigms.ipgrammar.VerbConjugationRule;
 
 @SuppressWarnings("serial")
 public class RuleTestServlet extends WebSocketServlet{
     
     private final int CONTEXT_SIZE = 80; // characters
-    private final Logger LOG = Logger.getLogger(RuleTestServlet.class.getName());
     
     //Tools
     private Language _lang;
@@ -40,7 +32,7 @@ public class RuleTestServlet extends WebSocketServlet{
     private List<String> ruleIdsIP = new ArrayList<String>();
     private CorpusTextHolder _engCorpus;
     private List<PatternRule> _myRules;
-
+    
     public RuleTestServlet() throws InstantiationException, IllegalAccessException, IOException{
         _lang = Language.getLanguageForShortName("en-GB").getClass().newInstance();
         _lang.getSentenceTokenizer().setSingleLineBreaksMarksParagraph(true);
@@ -69,11 +61,15 @@ public class RuleTestServlet extends WebSocketServlet{
         _engCorpus = new CorpusTextHolder ("eng");
         _engCorpus.getLinesToString(1000);
         
-        SocketLogicBridge.inform(this);
+        SocketLogicBridge.logicInstance(this);
     }
     
-    private String testIPRules(String ruleId, int lineStart, int lineLimit) throws IOException {
+    private void testIPRules(UpdateSocket socket, String ruleId, int lineStart, int lineLimit) {
     	
+    	String prefix = "test_rules#,#";
+    	String update = prefix + "Testing rule " +
+    		ruleId + " on " + (lineStart+lineLimit) + " lines";
+    	sendSocketMessage(socket, update, "update");
         disableAllActiveRules();
         
         if (ruleId.equals("###"))
@@ -82,15 +78,20 @@ public class RuleTestServlet extends WebSocketServlet{
         else
             _langTool.enableRule(ruleId);
         
-        List<RuleMatch> matches = _langTool.check(_engCorpus.getLinesToString(lineStart, lineLimit));
-        
-        //TODO : Either this side or client side figure a way to matches data in a more accessible fashion
-        RuleAsXmlSerializer serializer = new RuleAsXmlSerializer();
-        String xmlResponse = serializer.ruleMatchesToXml(matches, _engCorpus.getLinesToString(lineStart, lineLimit), CONTEXT_SIZE, _lang);
-        return xmlResponse;
+		try {
+			List<RuleMatch> matches;
+			matches = _langTool.check(_engCorpus.getLinesToString(lineStart, lineLimit));
+			RuleAsXmlSerializer serializer = new RuleAsXmlSerializer();
+	        String xmlResponse = prefix + 
+	        		serializer.ruleMatchesToXml(matches,
+	        				_engCorpus.getLinesToString(lineStart, lineLimit),
+	        				CONTEXT_SIZE, _lang);
+	        sendSocketMessage(socket, xmlResponse, "result");
+		} catch (IOException e) { e.printStackTrace(); }
     }
     
-    private String findWordContext (String word, int lineStart, int lineLimit) throws IOException {
+    private void findWordContext(UpdateSocket socket, String word,
+    		int lineStart, int lineLimit) throws IOException {
     	
     	List<String> posTagNames = new ArrayList<String>();
     	posTagNames.add("CC");
@@ -159,7 +160,8 @@ public class RuleTestServlet extends WebSocketServlet{
                 boolean match = true;
                 int count = 0;
 
-                for (int b = 0; b < phrase.length; b++) { //Check if the token [and subsequent tokens if specified] matches
+                for (int b = 0; b < phrase.length; b++) {
+                	//Check if the token [and subsequent tokens if specified] matches
                 	
                 	boolean isPosTag = false;
                 	String item = "";
@@ -169,11 +171,13 @@ public class RuleTestServlet extends WebSocketServlet{
                 		item = phrase[b].replace("%", "");
                 	}
                 	
-                    if (!tokens[(x+b)].getToken().equals(phrase[b]) && !isPosTag) { //If word (no %), check if matches
+                    if (!tokens[(x+b)].getToken().equals(phrase[b]) && !isPosTag) {
+                    	//If word (no %), check if matches
                     	match = false;
                         break;
                     }
-                    if (!tokens[(x+b)].hasPosTag(item) && isPosTag) { //If tag (% present), check if matches
+                    if (!tokens[(x+b)].hasPosTag(item) && isPosTag) {
+                    	//If tag (% present), check if matches
                     	match = false;
                     	break;
                     }
@@ -203,7 +207,8 @@ public class RuleTestServlet extends WebSocketServlet{
     	  	}
     	}
     	
-    	String output = "<tr><th>Tag</th><th>Pre</th><th>Post</th><th>Example</th></tr>";
+        String prefix = "context#,#";
+    	String output = prefix + "<tr><th>Tag</th><th>Pre</th><th>Post</th><th>Example</th></tr>";
     	for (int y = 0; preceedingTagsOccurence.length > y; y++)
     		output += "<tr><td>"
     			+ posTagNames.get(y) + "</td><td>"
@@ -213,10 +218,17 @@ public class RuleTestServlet extends WebSocketServlet{
     			+ "</td></tr>"
     			+"<tr><td></td><td></td><td></td><td>" + exampleLinesProceeding[y] + "</td></tr>";
     	
-    	return output;
+    	sendSocketMessage(socket, output, "result");
     }
     
-    private String testRuleCompetence () throws IOException {
+    private void testRuleCompetence(UpdateSocket socket) throws IOException {
+    	
+    	String prefix = "rule_competence#,#";
+    	
+    	String output = prefix + "Testing rule competence";
+    	sendSocketMessage(socket, output, "update");
+    	
+    	output = prefix + "Rules OK";
         EnglishPatternRuleTest enRuleTest  = new EnglishPatternRuleTest ();
         PatternRuleTest ruleTest = new PatternRuleTest ();
         
@@ -224,85 +236,94 @@ public class RuleTestServlet extends WebSocketServlet{
             enRuleTest.testRulesForLanguage(_lang);
             ruleTest.testGrammarRulesFromXML(_myRules, _langTool, _langTool, _lang);
         } catch (AssertionError a) {
-            String s = a.toString();
-            String p = s.substring(s.indexOf("IP_"), s.indexOf(":", s.indexOf("IP_")));
-            return "First error found with rule : " + p;
+            String error = a.toString();
+            String ruleId = error.substring(error.indexOf("IP_"), error.indexOf(":", error.indexOf("IP_")));
+            output = prefix + "First error found with rule : " + ruleId;
         }
-        return "Rules OK";
+        sendSocketMessage(socket, output, "result");
     }
     
-    private String ipRulesFalsePositive () throws IOException {
-writeLog("TESTING EACH IP RULE");
-        disableAllActiveRules();
+    private void ipRulesFalsePositive(UpdateSocket socket) throws IOException {
+    	
+    	String prefix = "false_positives#,#";
+    	disableAllActiveRules();
+        
+        String returnText = prefix
+        		+ "<tr><th>Rule ID</th><th>Matches</th></tr>";
         
         String corpusText = _engCorpus.getLinesToString(5000);
-        String returnText = "";
         
         for (int x = 0; ruleIdsIP.size() > x; x++) {
-writeLog("TESTING IP RULE " + (x+1) + " of " + ruleIdsIP.size());
+        	String update = prefix + "TESTING IP RULE "
+        		+ (x+1) + " of " + ruleIdsIP.size();
+        	sendSocketMessage(socket, update, "update");
+        	
             _langTool.enableRule(ruleIdsIP.get(x));
-            if (x != 0) {
+            if (x != 0)
                 _langTool.disableRule(ruleIdsIP.get(x-1));
-                returnText += ":";
-            }
             
             List<RuleMatch> matches = _langTool.check(corpusText);
-            returnText += ruleIdsIP.get(x) + "," + matches.size();
+            returnText += "<tr><td>" + ruleIdsIP.get(x)
+            	+ "</td><td>" + matches.size() + "</td></tr>";
         }
-        
-        return returnText;
+        sendSocketMessage(socket, returnText, "result");
     }
     
-    private String testRulesProcessTime () throws IOException {
-        String result = "";
+    private void testRulesProcessTime(UpdateSocket socket) throws IOException {
+    	
+    	String prefix = "process_time#,#";
+    	
         String corpusText = _engCorpus.getLinesToString(1000);
         List<RuleMatch> matches = _langTool.check(corpusText);
         
+        String result = prefix + 
+        		"<tr><th>Lines Used</th><th>Rules Used</th><th>Matches</th><th>Time Taken</th></tr>";
+        
         for (int x = 1; x <= 10; x++) {
-writeLog("LOOP NUMBER : " + x);
+        	String update = prefix + "LOOP NUMBER : " + x;
+        	sendSocketMessage(socket, update, "update");
+        	
             corpusText = _engCorpus.getLinesToString(x*1000);
-            
-            if (x != 1)
-                result += ":";
-            
             long startTime = System.nanoTime();
             matches = _langTool.check(corpusText);
             double timeElapsed = (double)((System.nanoTime() - startTime)/1000000000.0);
             
-            result += (x*1000) + "," + _langTool.getAllActiveRules().size()
-                    + "," + matches.size() + "," + timeElapsed;
+            result += "<tr><td>" + (x*1000) + "</td><td>"
+            		+ _langTool.getAllActiveRules().size()
+            		+ "</td><td>" + matches.size() + "</td><td>" + timeElapsed + "</td></tr>";
         }
-        return result;
+        sendSocketMessage(socket, result, "result");
     }
     
-    public void poll(UpdateSocket socket, String request) throws IOException {
+    public void handleRequest(UpdateSocket socket, String request) throws IOException {
     	
-    	System.out.println(request);
+    	String[] test = request.split(",");
     	
-    	String[] test = request.split(";");
-    	
-    	String output = "";
-    	
-    	if (test[0].equals("test_rule")) {
-    		String[] parameters = test[1].split("\\.");
-            output = testIPRules(parameters[0],
-                Integer.parseInt(parameters[1]),
-                Integer.parseInt(parameters[2]));
+    	switch (test[0]){
+    	case "test_rule":
+    		String[] parametersRules = test[1].split("\\.");
+            testIPRules(socket,
+            	parametersRules[0],
+            	Integer.parseInt(parametersRules[1]),
+            	Integer.parseInt(parametersRules[2]));
+            break;
+    	case "rule_competence":
+    		testRuleCompetence(socket);
+    		break;
+    	case "false_positives":
+    		ipRulesFalsePositive(socket);
+    		break;
+    	case "processing_time":
+    		testRulesProcessTime(socket);
+    		break;
+    	case "context":
+    		String[] parametersContext = test[1].split("\\.");
+        	findWordContext(socket,
+        		parametersContext[0],
+        		Integer.parseInt(parametersContext[1]),
+        		Integer.parseInt(parametersContext[2]));
+        	break;
     	}
-        if (test[0].equals("rule_competence"))
-            output = testRuleCompetence();
-        if (test[0].equals("false_positives"))
-            output = ipRulesFalsePositive();
-        if (test[0].equals("processing_time"))
-            output = testRulesProcessTime();
-        if (test[0].equals("context")) {
-        	String[] parameters = test[1].split("\\.");
-        	output = findWordContext(parameters[0],
-        			Integer.parseInt(parameters[1]),
-        			Integer.parseInt(parameters[2]));
-        }
-        
-        SocketLogicBridge.setStatus(socket, output);
     }
     
     @Override
@@ -311,7 +332,19 @@ writeLog("LOOP NUMBER : " + x);
         factory.register(UpdateSocket.class);
     }
     
-    private void disableAllActiveRules () {
+    private void sendSocketMessage(UpdateSocket socket, String output, String option){
+    	
+    	if (option.equals("update"))
+    		output = "update#;#" + output;
+    	if (option.equals("result"))
+    		output = "result#;#" + output;
+    	
+    	try {
+			socket.sendMessage(output);
+		} catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    private void disableAllActiveRules() {
         List<Rule> myRules = _langTool.getAllActiveRules();
         List<String> myRuleIds = new ArrayList<String>();
         
@@ -319,9 +352,5 @@ writeLog("LOOP NUMBER : " + x);
             myRuleIds.add(r.getId());        
             
         _langTool.disableRules(myRuleIds);
-    }
-    
-    private void writeLog(String text){
-        LOG.log(Level.INFO, text);
     }
 }

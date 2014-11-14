@@ -865,5 +865,37 @@
                 <example type="incorrect">He has been <marker>eats</marker> for hours now.</example>
         	</rule>
         </rulegroup>
+        <rulegroup id="IP_NOUN_PHRASE_HEADING" name="Definite headings for noun phrases">
+        	<!-- Specific to NN:UN -->
+        	<antipattern>
+        		<token postag_regexp="yes" postag="DT|WDT|PRP\$"/>
+        		<token min="0" postag_regexp="yes" postag="JJ.*"/>
+        		<token postag_regexp="yes" postag="NN.*" skip="-1"/>
+        		<token postag="CC"/>
+        		<token min="0" postag_regexp="yes" postag="JJ.*"/>
+        		<token postag="NN:UN"/>
+        	</antipattern>
+        	<antipattern>
+        		<token postag_regexp="yes" postag="DT|WDT|PRP\$"/>
+        		<token min="0" postag_regexp="yes" postag="JJ.*"/>
+        		<token postag="NN:UN"/>
+        	</antipattern>
+        	<rule>
+        		<pattern>
+	        		<token postag_regexp="yes" negate_pos="yes" postag="WDT|DT|PRP\$">
+	        			<exception postag_regexp="yes" postag="WDT|DT|PRP\$"/>
+	        		</token>
+        			<marker>
+        				<token postag="NN:UN"><exception negate_pos="yes" postag="NN:UN"/></token>
+        			</marker>
+	        		<token postag_regexp="yes" postag="VB.*"><exception postag="VBZ"/></token>
+        		</pattern>
+        		<message></message>
+        		<short></short>
+        		<example type="correct">Hot food from Japan and cold drink from Europe is served.</example>
+        		<example type="correct">When I have finished the book I will go to sleep.</example>
+        		<example type="incorrect">When I have finished <marker>book</marker> I will go to sleep.</example>
+        	</rule>
+        </rulegroup>
     </category>
 </rules>

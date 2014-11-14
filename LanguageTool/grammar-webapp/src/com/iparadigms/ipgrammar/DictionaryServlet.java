@@ -1,22 +1,13 @@
 package com.iparadigms.ipgrammar;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import morfologik.tools.FSADumpTool;
-
 @SuppressWarnings("serial")
 public class DictionaryServlet extends HttpServlet {
-    
-    private final Logger LOG = Logger.getLogger(RuleTestServlet.class.getName());
     
     private POSDictionary _dict;
     
@@ -56,9 +47,5 @@ public class DictionaryServlet extends HttpServlet {
     @Override
     public void doGet (HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.getWriter().print(getResponse(req));
-    }
-    
-    private void writeLog(String text){
-        LOG.log(Level.INFO, text);
     }
 }

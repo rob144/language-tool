@@ -9,6 +9,51 @@ testSocket.onopen = function(){
 
 testSocket.onmessage = function (message){
 	console.log(message.data);
+	
+	var type = message.data.split("#;#");
+	
+	if (type[0] == "update") {
+		switch( type[1].split("#,#")[0] ){
+		case "process_time":
+			$('#processingTimeResult').text(type[1].split("#,#")[1]);
+			break;
+		case "false_positives":
+			$('#falsePositiveResult').text(type[1].split("#,#")[1]);
+			break;
+		case "rule_competence":
+			$('#ruleCompetenceResult').text(type[1].split("#,#")[1]);
+			break;
+		case "test_rules":
+			$('#ruleTestResult').text(type[1].split("#,#")[1]);
+			break;
+		}
+    }
+	if (type[0] == "result") {
+		switch( type[1].split("#,#")[0]){
+		case "process_time":
+			$('#processingTimeResult').html(type[1].split("#,#")[1]);
+			$("#loadingDiv").fadeOut(500);
+			break;
+		case "false_positives":
+			$('#falsePositiveResult').html(type[1].split("#,#")[1]);
+			$("#loadingDiv").fadeOut(500);
+			break;
+		case "rule_competence":
+			$('#ruleCompetenceResult').text(type[1].split("#,#")[1]);
+			$("#loadingDiv").fadeOut(500);
+			break;
+		case "test_rules":
+			new Transformation().setXml(type[1].split("#,#")[1])
+				.setXslt("test_errors.xsl")
+				.transform("ruleTestResult");
+			$("#loadingDiv").fadeOut(500);
+			break;
+		case "context":
+			$('#wordContextResult').html(type[1].split("#,#")[1]);
+			$("#loadingDiv").fadeOut(500);
+			break;
+		}
+	}
 };
 
 testSocket.onclose = function(){
@@ -19,7 +64,7 @@ testSocket.onclose = function(){
 /* DATA class : variables and methods for handling the input
  * text, parsing error data and adding markup
 /* ********************************************************* */
-var DATA = { 
+var DATA = {
     plainText:          '', 
     xmlErrors:          '',
     arrLineObjs:        [],
@@ -39,7 +84,8 @@ var DATA = {
         function( arrChars, lineNumber ) {
             var lineMarkup = "";
             for(var charNum = 0; charNum < arrChars.length; charNum++ ){
-                lineMarkup += "<a id='" + lineNumber + "_" + charNum + "'>" + arrChars[charNum] + "</a>";
+                lineMarkup += "<a id='" + lineNumber + "_"
+                + charNum + "'>" + arrChars[charNum] + "</a>";
             }
             return lineMarkup;
         },
@@ -306,64 +352,34 @@ function buildDictionary(){
 }
 
 function runRuleTest(){
-	testSocket.send("request:test_rule;###.0.1000");
-    /*doAjaxRequest('GET', '/test',
-    {test : "test_rule", rule_id : $( "#ruleTestId" ).val(), line_start : $( "#ruleTestLineStart" ).val(), line_limit : $( "#ruleTestLineEnd" ).val()},
-        function(response){
-            new Transformation().setXml(response).setXslt("test_errors.xsl").transform("ruleTestResult");
-        }
-    )*/
+	$("#loadingDiv").show();
+	testSocket.send("request;test_rule," +
+		$( "#ruleTestId" 			).val() + "." +
+		$( "#ruleTestLineStart"	).val() + "." +
+		$( "#ruleTestLineEnd" 	).val());
 }
 
 function getWordContext(){
-    doAjaxRequest('GET', '/test',
-    	{test : "context",
-    		word : $( "#wordContextWord" ).val(),
-    		line_start : $( "#wordContextLineStart" ).val(),
-    		line_limit : $( "#wordContextLineEnd" ).val()},
-    	function(response){
-    		$('#wordContextResult').html(response);
-    	}
-    )
+	$("#loadingDiv").show();
+	testSocket.send("request;context," +
+		$( "#wordContextWord" 		).val() + "." +
+		$( "#wordContextLineStart" 	).val() + "." +
+		$( "#wordContextLineEnd" 	).val());
 }
 
 function runRuleCompetenceTest(){
-    doAjaxRequest('GET', '/test', {test : "rule_competence"},
-        function(response){
-            $('#ruleCompetenceResult').text(response);
-        }
-    )
+	$("#loadingDiv").show();
+	testSocket.send("request;rule_competence");
 }
 
 function runFalsePositivesTest(){
-	testSocket.send("request:false_positives");
-	/*$("#loadingDiv").show();
-    doAjaxRequest('GET', '/test', {test : "false_positives"},
-        function(response){
-            var entries = response.split(":");
-            var html = "<tr><th>Rule ID</th><th>Matches</th></tr>";
-            for (x = 0; x < entries.length; x++) {
-                var column = entries[x].split(",");
-                html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td></tr>";
-            }
-            $("#loadingDiv").fadeOut(500);
-            $('#falsePositiveResult').html(html);
-        }
-    )*/
+	$("#loadingDiv").show();
+	testSocket.send("request;false_positives");
 }
 
 function runProcessingTimeTest(){
-    doAjaxRequest('GET', '/test', {test : "processing_time"},
-        function(response){
-            var entries = response.split(":");
-            var html = "<tr><th>Lines Used</th><th>Rules Used</th><th>Matches</th><th>Time Taken</th></tr>";
-            for (x = 0; x < entries.length; x++) {
-                var column = entries[x].split(",");
-                html += "<tr><td>" + column[0] + "</td><td>" + column[1] + "</td><td>" + column[2] + "</td><td>" + column[3] + "</td></tr>";
-            }
-            $('#processingTimeResult').html(html);
-        }
-    )
+	$("#loadingDiv").show();
+	testSocket.send("request;processing_time");
 }
 
 function setTestText(){
